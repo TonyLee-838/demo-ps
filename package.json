@@ -12,18 +12,13 @@
     "uxp:debug": "cd dist && uxp plugin debug"
   },
   "dependencies": {
-    "@rc-component/color-picker": "^1.5.2",
-    "@simonwep/pickr": "^1.9.0",
-    "@types/lodash-es": "^4.17.12",
-    "@types/react-color": "^3.0.12",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
-    "react-color": "^2.19.3",
-    "react-color-palette": "^7.1.0",
-    "react-dom": "^18.2.0",
-    "vanilla-picker": "^2.12.2"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/react-color": "^3.0.12",
     "@rsbuild/core": "^0.4.9",
     "@rsbuild/plugin-react": "^0.4.9",
     "@types/photoshop": "^25.0.4",

@@ -1,0 +1,13 @@
+.input {
+  display: block;
+  width: 60px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.form {
+  margin-left: 16px;
+}

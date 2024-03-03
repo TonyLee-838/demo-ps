@@ -1,10 +1,17 @@
-.colorPicker .color {
-  margin: 16px auto;
+.colorPicker {
+  display: flex;
+}
+
+.picker-canvas {
+  position: relative;
   border-radius: 2px;
   position: relative;
   border: 1px solid #252525;
   outline: 1px solid #8c8c8c;
-  outline-radius: 10px;
+  margin-right: 8px;
+
+  width: 70vw;
+  aspect-ratio: 1;
 }
 
 .colorPicker .color:after {
@@ -18,64 +25,36 @@
   border-radius: 8px;
 }
 
-@media (prefers-color-scheme: darkest) {
-  .colorPicker .color {
-    outline-color: #6e6e6e;
-  }
-}
-@media (prefers-color-scheme: light), (prefers-color-scheme: lightest) {
-  .colorPicker .color {
-    outline-color: #ffffff;
-  }
-}
-
-.colorPicker .filledRange {
-  position: relative;
-}
-
-.colorPicker .sliderWithInput {
+.canvas-container {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 30px;
+
+  height: 600px;
 }
 
-.colorPicker .sliderWithInput > *:first-child {
-  flex: 1 1 auto;
-}
-
-.colorPicker .sliderWithInput > *:last-child {
-  margin-left: 8px;
-  flex: 0 0 auto;
+.output {
   width: 50px;
-}
-.colorPicker sp-textfield {
-  margin-top: 10px;
-  height: 24px;
-  background-color: transparent;
+  height: 50px;
+  margin-left: 8px;
+  border-radius: 4px;
 }
 
-.colorPicker sp-slider {
-  margin-top: -9px;
+.click-position-dot {
+  top: 20px;
+  left: 20px;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  z-index: 9999;
 }
 
-.colorPicker sp-slider:focus {
-  outline: 1px solid #2680eb;
-  outline-radius: 4px;
-}
-
-@media (prefers-color-scheme: darkest), (prefers-color-scheme: lightest) {
-  .colorPicker sp-slider:focus {
-    outline-color: #2185e6;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  .colorPicker sp-slider:focus {
-    outline-color: #3592eb;
-  }
-}
-@media (prefers-color-scheme: light) {
-  .colorPicker sp-slider:focus {
-    outline-color: #0679e0;
-  }
+.click-position-dot-inner {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid black;
 }
