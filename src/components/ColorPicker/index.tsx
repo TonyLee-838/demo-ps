@@ -148,6 +148,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
       {/* 展示数值的 */}
       <ColorForm
+        onChange={value => {
+          console.log('!!~ ~ ColorPicker ~ value:', value);
+
+        }}
         value={{
           hue: hue,
           saturation: containerEl.current
