@@ -46,6 +46,20 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   }
 
   useEffect(() => {
+    const mouseUpEventHandler = () => {
+      console.log('鼠标抬起啦！！！');
+    }
+
+    /** 在全局body上注册一个事件监听 */
+    document.body.addEventListener('mouseup', mouseUpEventHandler)
+
+    return () => {
+      /** 退出时要清除监听，防止内存泄漏 */
+      document.body.removeEventListener('mouseup', mouseUpEventHandler)
+    }
+  }, [])
+
+  useEffect(() => {
     setPureRGB(hueToRGB(hue));
   }, [hue]);
 

@@ -71,13 +71,20 @@ export default function ColorForm({
               max={max}
               type="number"
               value={val}
+              /** 表单改变时触发的事件 */
               onChange={e => {
+                /** 表单输入的值，但是是 string类型 */
                 const inputValue = e.target.value
 
                 const newValue = {
+                  /** 和这个表单改变无关的值，复制进来，比如这个是red表单，把其它的blue, green等不变的值复制进来 */
                   ...value,
+
+                  /** 这里是改变的值，看一下是不是number */
                   [name]: Number.isNaN(Number(inputValue)) ? 0 : Number(inputValue)
                 }
+
+                /** 传到外面去 */
                 onChange(newValue)
               }}
             />
