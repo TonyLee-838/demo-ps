@@ -51,7 +51,7 @@ export default function ColorForm({
   onChange,
 }: {
   value: Input;
-  onChange: (value: Input) => void;
+  onChange: (changedValue: Partial<Input>, fullValue: Input) => void;
 }) {
   return (
     <div className="form">
@@ -76,16 +76,21 @@ export default function ColorForm({
                 /** 表单输入的值，但是是 string类型 */
                 const inputValue = e.target.value
 
-                const newValue = {
-                  /** 和这个表单改变无关的值，复制进来，比如这个是red表单，把其它的blue, green等不变的值复制进来 */
-                  ...value,
-
+                const partialUpdatedValue = {
                   /** 这里是改变的值，看一下是不是number */
                   [name]: Number.isNaN(Number(inputValue)) ? 0 : Number(inputValue)
                 }
 
+                const fullValue = {
+                  /** 和这个表单改变无关的值，复制进来，比如这个是red表单，把其它的blue, green等不变的值复制进来 */
+                  ...value,
+
+                  /** 相同的key，后面的会覆盖前面的 */
+                  ...partialUpdatedValue
+                }
+
                 /** 传到外面去 */
-                onChange(newValue)
+                onChange(partialUpdatedValue, fullValue)
               }}
             />
             {isPercentage ? <span>%</span> : null}

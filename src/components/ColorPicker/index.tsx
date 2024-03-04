@@ -162,8 +162,12 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
       {/* 展示数值的 */}
       <ColorForm
-        onChange={value => {
-          console.log('!!~ ~ ColorPicker ~ value:', value);
+        onChange={(changed, allValues) => {
+          console.log('!!~ ~ ColorPicker ~ changed, allValues:', changed, allValues);
+
+          if (changed.red) {
+            setPureRGB({ ...pureRGB, r: changed.red })
+          }
 
         }}
         value={{
