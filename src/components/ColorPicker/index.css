@@ -1,17 +1,18 @@
 .colorPicker {
   display: flex;
+  height: 96vh; /* 假设你想要 colorPicker 占据视口高度的 80% */
+  width: 96vw; /* 占据全部视口宽度 */
 }
 
 .picker-canvas {
   position: relative;
   border-radius: 2px;
   position: relative;
-  border: 1px solid #252525;
-  outline: 1px solid #8c8c8c;
+  border: 2px solid #252525;
+  outline: 2px solid #8c8c8c;
   margin-right: 8px;
   width: 70vw;
-  aspect-ratio: 1;
-  height: 90%;
+  height: 80vh;
 }
 
 .colorPicker .color:after {
@@ -23,37 +24,46 @@
   bottom: 0;
   border: 1px solid white;
   border-radius: 8px;
+  margin-left: 10px;
 }
 
 .canvas-container {
   display: flex;
-  height: 600px;
+  height: 90vh; /* 假设你想让 canvas-container 占据视口高度的 70% */
+  width: 80vw;
 }
 
 .output {
-  width: 50px;
-  height: 50px;
+  width: 10vh;
+  height: 10vh;
   margin-left: 8px;
   border-radius: 4px;
 }
 
 .click-position-dot {
-  top: 20px;
-  left: 20px;
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-  z-index: 9999;
-}
-
-.click-position-dot-inner {
   width: 16px;
   height: 16px;
   border-radius: 8px;
-  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(250, 250, 250);
+  z-index: 9999;
+  margin-left: -8px; /* 新增：左边距为负的一半宽度 */
+  margin-top: -8px; /* 新增：上边距为负的一半高度 */
 }
+
+.click-position-dot-inner {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  border: 1px solid rgb(11, 11, 11);
+}
+
+/* .click-position-dot-inner2 {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  border: 1px solid rgb(250, 250, 250);
+} */

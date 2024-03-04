@@ -27,6 +27,24 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
 
+  function getRelativeCoordinates(event, element) {
+    // 获取元素的边界信息
+    const bounds = element.getBoundingClientRect();
+
+    // 计算相对坐标
+    let x = event.clientX - bounds.left;
+    let y = event.clientY - bounds.top;
+    console.log("🚀 ~ getRelativeCoordinates ~ {x,y}:", { x, y });
+
+    x = Math.max(x, 0);
+    x = Math.min(x, bounds.width); // 改为height属性
+
+    y = Math.max(y, 0);
+    y = Math.min(y, bounds.height);
+
+    return { x, y };
+  }
+
   useEffect(() => {
     setPureRGB(hueToRGB(hue));
   }, [hue]);
@@ -39,19 +57,23 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     setFinalRGB(createRGB(...finalRGB));
 
-    // syncPluginRGBToPhotoShop(finalRGB);
+    syncPluginRGBToPhotoShop(finalRGB);
   }, [coordinate, hue]);
 
   const startDragging = (e: any) => {
     setDragging(true);
-    console.log("🚀 ~ startDragging ~ true:", true);
-
     e.preventDefault(); // 防止鼠标光标选中页面上的其他元素
   };
 
   const stopDragging = () => {
     setDragging(false);
-    console.log("🚀 ~ stopDragging ~ false:", false);
+  };
+
+  const outDragging = (e: any) => {
+    if (dragging) {
+      const { x, y } = getRelativeCoordinates(e, containerEl.current);
+      setCoordinate({ x, y });
+    }
   };
 
   const doDrag = (e: any) => {
@@ -59,11 +81,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     e.preventDefault();
 
     if (dragging) {
-      const x = e.nativeEvent.offsetX;
-      const y = e.nativeEvent.offsetY;
-      //console.log("🚀 ~ doDrag ~ y:", y);
+      const { x, y } = getRelativeCoordinates(e, containerEl.current);
       setCoordinate({ x, y });
-      //  onChange?.(x, y);
     }
   };
 
@@ -72,6 +91,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       <div
         className="canvas-container"
         onMouseMove={doDrag}
+        onMouseLeave={doDrag}
         onMouseUp={stopDragging}
       >
         <div
@@ -81,11 +101,11 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             event.preventDefault();
             event.stopPropagation();
             if (dragging) {
-              const x = event.nativeEvent.offsetX;
-              const y = event.nativeEvent.offsetY;
-              //console.log("🚀 ~ doDrag ~ y:", y);
+              const { x, y } = getRelativeCoordinates(
+                event,
+                containerEl.current
+              );
               setCoordinate({ x, y });
-              //  onChange?.(x, y);
             }
           }}
           className="picker-canvas"
@@ -93,6 +113,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${pureRGB.r}, ${pureRGB.g},${pureRGB.b}))`,
           }}
         >
+          {/* 那个点啊 */}
           <div
             className="click-position-dot"
             style={{
@@ -103,7 +124,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               e.preventDefault();
             }}
           >
-            <div className="click-position-dot-inner"></div>
+            <div className="click-position-dot-inner">
+              {/* <div className="click-position-dot-inner2"></div> */}
+            </div>
           </div>
         </div>
 

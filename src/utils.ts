@@ -25,22 +25,29 @@ function linearToGammaSpaceExact(value: number) {
   }
 }
 
-export function linearToSRGB(c: RGB): RGB {
-  return {
-    r: linearToGammaSpaceExact(c.r),
-    g: linearToGammaSpaceExact(c.g),
-    b: linearToGammaSpaceExact(c.b),
-  };
-}
+// export function linearToSRGB(c: RGB): RGB {
+//   return {
+//     r: linearToGammaSpaceExact(c.r),
+//     g: linearToGammaSpaceExact(c.g),
+//     b: linearToGammaSpaceExact(c.b),
+//   };
+// }
 
-export function SRGBToLinear(c: RGB) {
-  // 分别处理c的每个分量（红色、绿色、蓝色）
-  let linearRGB = {
-    r: c.r <= 0.04045 ? c.r / 12.92 : Math.pow((c.r + 0.055) / 1.055, 2.4),
-    g: c.g <= 0.04045 ? c.g / 12.92 : Math.pow((c.g + 0.055) / 1.055, 2.4),
-    b: c.b <= 0.04045 ? c.b / 12.92 : Math.pow((c.b + 0.055) / 1.055, 2.4),
-  };
+// export function SRGBToLinear(c: RGB) {
+//   // 分别处理c的每个分量（红色、绿色、蓝色）
+//   let linearRGB = {
+//     r: c.r <= 0.04045 ? c.r / 12.92 : Math.pow((c.r + 0.055) / 1.055, 2.4),
+//     g: c.g <= 0.04045 ? c.g / 12.92 : Math.pow((c.g + 0.055) / 1.055, 2.4),
+//     b: c.b <= 0.04045 ? c.b / 12.92 : Math.pow((c.b + 0.055) / 1.055, 2.4),
+//   };
 
+//   return linearRGB;
+// }
+
+function SRGBToLinear(c: number) {
+  var linearRGBLo = c / 12.92;
+  var linearRGBHi = Math.pow((c + 0.055) / 1.055, 2.4);
+  var linearRGB = c <= 0.04045 ? linearRGBLo : linearRGBHi;
   return linearRGB;
 }
 
@@ -76,7 +83,7 @@ export function hueToRGB(hue: number): RGB {
     r = x;
     g = 0;
     b = chroma;
-  } else if (300 <= hue && hue < 360) {
+  } else if (300 <= hue && hue <= 360) {
     r = chroma;
     g = 0;
     b = x;
@@ -157,36 +164,28 @@ export function rgbToHue(r: number, g: number, b: number) {
   return hue; // The hue value will be between 0 and 360
 }
 
-export async function syncPluginRGBToPhotoShop(finalRGB: RGB) {
-  const photoshop = window.require("photoshop");
+export async function syncPluginRGBToPhotoShop(finalRGB: Number[]) {
+  console.log("🚀 ~ syncPluginRGBToPhotoShop ~ finalRGB:", finalRGB);
+  const photoshop = window.require("photoshop").core;
 
   async function setColorModal() {
-    // 模态范围内的代码，可以安全地修改Photoshop状态
-    // ... 设置颜色的代码 ...
     try {
+      const photoshop = window.require("photoshop");
       const app = photoshop.app;
-      console.log("🚀 ~ setColorModal ~ photoshop:", photoshop);
-      console.log("🚀 ~ setColorModal ~ app:", app);
-      // 将十六进制颜色转换为RGB值
-      //const [r, g, b] = hexToRgb(currentColor.value);
+      const SolidColor = app.SolidColor;
+      const col = new SolidColor();
+      //转到 gamma2.2？ 反正ps偏亮， 所以这边是变暗，
+      col.rgb.red = SRGBToLinear(Number(finalRGB[0]) / 255) * 255;
+      col.rgb.green = SRGBToLinear(Number(finalRGB[1]) / 255) * 255;
+      col.rgb.blue = SRGBToLinear(Number(finalRGB[2]) / 255) * 255;
 
-      console.log("🚀 ~ setColorModal ~ app.SolidColor:", app.SolidColor);
-
-      debugger;
-
-      // if(!app.foregroundColor.rgb) {
-      //   app.foregroundColor.rgb = new RGBColor
-      // }
-
-      // app.foregroundColor.rgb.blue = finalRGB.b;
-      // app.foregroundColor.rgb.red = finalRGB.r;
-      // app.foregroundColor.rgb.green = finalRGB.g;
+      app.foregroundColor = col;
     } catch (error) {
       console.log("🚀 ~ setColorModal ~ error:", error);
     }
   }
   try {
-    await photoshop.core.executeAsModal(setColorModal, {
+    await photoshop.executeAsModal(setColorModal, {
       commandName: "Set Color Command",
     });
   } catch (e) {

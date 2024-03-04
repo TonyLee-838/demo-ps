@@ -47,7 +47,7 @@ export default function ColorSlider({
       className="slider-container"
       // onMouseDown={doDrag}
       onMouseMove={doDrag}
-      //onMouseLeave={stopDragging}
+      // onMouseLeave={doDrag}
       onMouseUp={stopDragging}
       onClick={(e) => {
         //  console.log("🚀 ~ e:", e);
