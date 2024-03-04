@@ -66,7 +66,21 @@ export default function ColorForm({
         return (
           <div className="item" key={`form_item_${name}`}>
             <div className="label">{name}</div>
-            <input className="input" max={max} type="number" value={val} />
+            <input
+              className="input"
+              max={max}
+              type="number"
+              value={val}
+              onChange={e => {
+                const inputValue = e.target.value
+
+                const newValue = {
+                  ...value,
+                  [name]: Number.isNaN(Number(inputValue)) ? 0 : Number(inputValue)
+                }
+                onChange(newValue)
+              }}
+            />
             {isPercentage ? <span>%</span> : null}
           </div>
         );
