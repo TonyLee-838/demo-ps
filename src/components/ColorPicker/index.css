@@ -9,9 +9,9 @@
   border: 1px solid #252525;
   outline: 1px solid #8c8c8c;
   margin-right: 8px;
-
   width: 70vw;
   aspect-ratio: 1;
+  height: 90%;
 }
 
 .colorPicker .color:after {
@@ -27,7 +27,6 @@
 
 .canvas-container {
   display: flex;
-
   height: 600px;
 }
 

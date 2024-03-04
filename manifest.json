@@ -11,15 +11,10 @@
     }
   ],
   "requiredPermissions": {
-    "network": true,
     "allowCodeGenerationFromStrings": true,
     "launchProcess": {
       "schemes": ["http", "https"],
       "extensions": [".svg", ".png"]
-    },
-    "webview": {
-      "allow": "yes",
-      "domains": ["https://*.adobe.com", "https://*.google.com"]
     }
   },
   "entrypoints": [

@@ -21,4 +21,4 @@ entrypoints.setup({
   },
 });
 
-// document.body.appendChild(rootEl);
+document.body.appendChild(rootEl);

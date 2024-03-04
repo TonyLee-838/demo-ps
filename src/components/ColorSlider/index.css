@@ -15,8 +15,8 @@
 
 .slider-container {
   position: relative;
-  width: 30px;
-  height: 100%;
+  width: 35px;
+  height: 90%;
   background-color: #ddd;
   border-radius: 5px;
   user-select: none; /* 防止用户选择文本 */

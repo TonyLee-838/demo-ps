@@ -45,17 +45,18 @@ export default function ColorSlider({
   return (
     <div
       className="slider-container"
+      // onMouseDown={doDrag}
       onMouseMove={doDrag}
-      onMouseLeave={stopDragging}
+      //onMouseLeave={stopDragging}
       onMouseUp={stopDragging}
       onClick={(e) => {
-        console.log("🚀 ~ e:", e);
+        //  console.log("🚀 ~ e:", e);
         e.preventDefault();
         e.stopPropagation();
 
         const sliderRect = e.currentTarget.getBoundingClientRect();
         let newPosition = e.clientY - sliderRect.top; // 改为clientY和top属性
-        console.log("🚀 ~ newPosition:", newPosition);
+        // console.log("🚀 ~ newPosition:", newPosition);
 
         newPosition = Math.max(newPosition, 0);
         newPosition = Math.min(newPosition, sliderRect.height); // 改为height属性
