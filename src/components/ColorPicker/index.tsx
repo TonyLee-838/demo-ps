@@ -6,6 +6,7 @@ import "./index.css";
 import {
   Coordinate,
   createRGB,
+  createHSV,
   hsbToRgb,
   hueToRGB,
   RGB,
@@ -35,22 +36,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
 
   function calculateXYFromSV(saturation, brightness, container) {
-    const x = saturation * container.current.offsetWidth;
-    const y = (1 - brightness) * container.current.offsetHeight;
+    const x = (saturation / 100) * container.current.offsetWidth;
+    const y = (1 - brightness / 100) * container.current.offsetHeight;
     return { x, y };
   }
-
-  // function calculateYofHue(h, container) {
-  //   //const totalHeight = (1 - brightness) * container.current.offsetHeight;
-  //   const totalHeight = container.offsetHeight;
-  //   let position = (1 - h / 360) * totalHeight;
-
-  //   // 限制位置在滑块范围内
-  //   position = Math.max(position, 0);
-  //   position = Math.min(position, totalHeight);
-
-  //   return position;
-  // }
 
   function getRelativeCoordinates(event, element) {
     // 获取元素的边界信息
@@ -128,8 +117,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
       setCoordinate({ x, y });
 
-      const saturation = x / containerEl.current.offsetWidth;
-      const brightness = 1 - y / containerEl.current.offsetHeight;
+      const saturation = (x / containerEl.current.offsetWidth) * 100;
+      const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
+
       const finalRGB = hsbToRgb(hue, saturation, brightness);
 
       setSaturation(saturation);
@@ -217,7 +207,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           } else if (changed.blue != null) {
             tempRGB = createRGB(allValues.red, allValues.green, changed.blue);
           }
-
           if (tempRGB) {
             //表单的rgb更改 触发hsv的更改。
             console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
@@ -233,14 +222,45 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             setCoordinate(calculateXYFromSV(s, v, containerEl));
             setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
           }
+
+          let tempHSV;
+          if (changed.hue != null) {
+            tempHSV = createHSV(
+              changed.hue,
+              allValues.saturation,
+              allValues.brightness
+            );
+            console.log("🚀 ~ ColorPicker ~ tempHSV:", tempHSV);
+          } else if (changed.saturation != null) {
+            tempHSV = createHSV(
+              allValues.hue,
+              changed.saturation,
+              allValues.brightness
+            );
+          } else if (changed.brightness != null) {
+            tempHSV = createHSV(
+              allValues.hue,
+              allValues.saturation,
+              changed.brightness
+            );
+          }
+          if (tempHSV) {
+            const h = tempHSV.h;
+            const s = tempHSV.s;
+            const v = tempHSV.v;
+            setHue(h);
+            setPureRGB(hueToRGB(h));
+            sliderRef.current?.setHue(h);
+            setSaturation(s);
+            setBrightness(v);
+            setCoordinate(calculateXYFromSV(s, v, containerEl));
+
+            const tempRGB = hsbToRgb(h, s, v);
+
+            setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+          }
         }}
         value={{
-          // hue: hue,
-          // saturation: saturation,
-          // brightness: brightness,
-          // red: finalRGB.r,
-          // green: finalRGB.g,
-          // blue: finalRGB.b,
           hue: Math.round(hue),
           saturation: saturation,
           brightness: brightness,

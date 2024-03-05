@@ -13,6 +13,10 @@ export function createRGB(r: number, g: number, b: number): RGB {
   return { r, g, b };
 }
 
+export function createHSV(h: number, s: number, v: number): RGB {
+  return { h, s, v };
+}
+
 function linearToGammaSpaceExact(value: number) {
   if (value <= 0.0) {
     return 0.0;
@@ -78,6 +82,8 @@ export function hueToRGB(hue: number): RGB {
 }
 
 export function hsbToRgb(h: number, s: number, v: number) {
+  s /= 100;
+  v /= 100;
   let c = v * s; // Chroma
   let x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   let m = v - c;
@@ -179,42 +185,10 @@ export function rgbToHsb(r: number, g: number, b: number) {
   // HSB results from 0 to 1
   return {
     h: h * 360, // Convert hue to degrees
-    s: s, // Convert saturation to percentage
-    v: v, // Convert brightness to percentage
+    s: s * 100, // Convert saturation to percentage
+    v: v * 100, // Convert brightness to percentage
   };
 }
-
-// export function rgbToHsv(r: number, g: number, b: number) {
-//   (r /= 255), (g /= 255), (b /= 255);
-
-//   let max = Math.max(r, g, b),
-//     min = Math.min(r, g, b);
-//   let h,
-//     s,
-//     v = max;
-
-//   let d = max - min;
-//   s = max == 0 ? 0 : d / max;
-
-//   if (max == min) {
-//     h = 0; // achromatic
-//   } else {
-//     switch (max) {
-//       case r:
-//         h = (g - b) / d + (g < b ? 6 : 0);
-//         break;
-//       case g:
-//         h = (b - r) / d + 2;
-//         break;
-//       case b:
-//         h = (r - g) / d + 4;
-//         break;
-//     }
-//     h /= 6;
-//   }
-
-//   return { h: h * 360, s: s, v: v };
-// }
 
 export async function syncPluginRGBToPhotoShop(finalRGB: {}) {
   console.log("🚀 ~ syncPluginRGBToPhotoShop ~ finalRGB:", finalRGB);
