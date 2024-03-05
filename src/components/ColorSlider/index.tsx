@@ -1,4 +1,5 @@
 import React, {
+  useEffect,
   useRef,
   useState,
   forwardRef,
@@ -51,9 +52,23 @@ export default forwardRef(function ColorSlider(
     };
   });
 
+  useEffect(() => {
+    const mouseUpEventHandler = () => {
+      console.log("鼠标抬起啦！！！");
+    };
+
+    /** 在全局body上注册一个事件监听 */
+    document.body.addEventListener("mouseup", mouseUpEventHandler);
+
+    return () => {
+      /** 退出时要清除监听，防止内存泄漏 */
+      document.body.removeEventListener("mouseup", mouseUpEventHandler);
+    };
+  }, []);
+
   const doDrag = (e: any) => {
-    e.stopPropagation();
-    e.preventDefault();
+    // e.stopPropagation();
+    // e.preventDefault();
 
     if (dragging) {
       const sliderRect = e.currentTarget.getBoundingClientRect();
@@ -81,13 +96,11 @@ export default forwardRef(function ColorSlider(
       onMouseLeave={doDrag}
       onMouseUp={stopDragging}
       onClick={(e) => {
-        //  console.log("🚀 ~ e:", e);
-        e.preventDefault();
-        e.stopPropagation();
+        // e.preventDefault();
+        // e.stopPropagation();
 
         const sliderRect = e.currentTarget.getBoundingClientRect();
         let newPosition = e.clientY - sliderRect.top; // 改为clientY和top属性
-        // console.log("🚀 ~ newPosition:", newPosition);
 
         newPosition = Math.max(newPosition, 0);
         newPosition = Math.min(newPosition, sliderRect.height); // 改为height属性

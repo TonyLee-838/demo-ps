@@ -191,7 +191,6 @@ export function rgbToHsb(r: number, g: number, b: number) {
 }
 
 export async function syncPluginRGBToPhotoShop(finalRGB: {}) {
-  console.log("🚀 ~ syncPluginRGBToPhotoShop ~ finalRGB:", finalRGB);
   const photoshop = window.require("photoshop").core;
 
   async function setColorModal() {
@@ -215,7 +214,6 @@ export async function syncPluginRGBToPhotoShop(finalRGB: {}) {
       commandName: "Set Color Command",
     });
   } catch (e) {
-    console.log("🚀 ~ syncPluginRGBToPhotoShop ~ e:", e);
     // 处理错误
     console.error(e);
   }

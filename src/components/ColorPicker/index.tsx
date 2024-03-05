@@ -12,7 +12,6 @@ import {
   RGB,
   rgbToHue,
   rgbToHsb,
-  rgbToHsv,
   syncPluginRGBToPhotoShop,
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
@@ -48,7 +47,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     // 计算相对坐标
     let x = event.clientX - bounds.left;
     let y = event.clientY - bounds.top;
-    // console.log("🚀 ~ getRelativeCoordinates ~ {x,y}:", { x, y });
 
     x = Math.max(x, 0);
     x = Math.min(x, bounds.width); // 改为height属性
@@ -73,30 +71,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     };
   }, []);
 
-  //finalRGB更改，引发其余所有值的变更
-  //hsv 还有 对应的 坐标位置。
-
   useEffect(() => {
-    //console.log("🚀 ~ useEffect ~ finalRGB:", finalRGB);
-
-    const r = finalRGB.r;
-    const g = finalRGB.g;
-    const b = finalRGB.b;
-
-    const finalHSV = rgbToHsb(r, g, b);
-
-    const h = finalHSV.h; //有的返回对象 有的返回数组
-    const s = finalHSV.s;
-    const v = finalHSV.v;
-
-    //setHue(h);
-    //setPureRGB(hueToRGB(h));
-    //sliderRef.current?.setHue(h);
-
-    //setSaturation(s);
-    //setBrightness(v);
-    //setCoordinate(calculateXYFromSV(s, v, containerEl));
-
     syncPluginRGBToPhotoShop(finalRGB);
   }, [finalRGB]);
 
@@ -201,7 +176,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           let tempRGB;
           if (changed.red != null) {
             tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
-            console.log("🚀 ~ ColorPicker ~ tempRGB1111:", tempRGB);
           } else if (changed.green != null) {
             tempRGB = createRGB(allValues.red, changed.green, allValues.blue);
           } else if (changed.blue != null) {
@@ -209,7 +183,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           }
           if (tempRGB) {
             //表单的rgb更改 触发hsv的更改。
-            console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
             const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
             const h = finalHSV.h;
             const s = finalHSV.s;
@@ -230,7 +203,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               allValues.saturation,
               allValues.brightness
             );
-            console.log("🚀 ~ ColorPicker ~ tempHSV:", tempHSV);
           } else if (changed.saturation != null) {
             tempHSV = createHSV(
               allValues.hue,

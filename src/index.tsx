@@ -4,7 +4,6 @@ import App from "./App";
 
 import { entrypoints } from "uxp";
 const rootEl = document.createElement("div");
-console.log("🚀 ~ file: index.tsx:7 ~ rootEl:", rootEl);
 
 rootEl.classList.add(".root-element");
 const root = ReactDOM.createRoot(rootEl);
