@@ -14,7 +14,7 @@ import {
   rgbToHsv,
   syncPluginRGBToPhotoShop,
 } from "../../utils";
-import ColorSlider from "../ColorSlider";
+import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
 
 const DEFAULT_RGB = createRGB(255, 0, 0);
@@ -22,6 +22,8 @@ const DEFAULT_RGB = createRGB(255, 0, 0);
 export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const containerEl = useRef(null);
   const [dragging, setDragging] = useState(false);
+
+  const sliderRef = useRef<ColorSliderRefType>();
 
   const [hue, setHue] = useState(0);
   const [saturation, setSaturation] = useState(1);
@@ -37,6 +39,18 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     const y = (1 - brightness) * container.current.offsetHeight;
     return { x, y };
   }
+
+  // function calculateYofHue(h, container) {
+  //   //const totalHeight = (1 - brightness) * container.current.offsetHeight;
+  //   const totalHeight = container.offsetHeight;
+  //   let position = (1 - h / 360) * totalHeight;
+
+  //   // 限制位置在滑块范围内
+  //   position = Math.max(position, 0);
+  //   position = Math.min(position, totalHeight);
+
+  //   return position;
+  // }
 
   function getRelativeCoordinates(event, element) {
     // 获取元素的边界信息
@@ -70,54 +84,33 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   setPureRGB(hueToRGB(hue));
-  // }, [hue]);
-
-  // useEffect(() => {
-  //   const saturation = coordinate.x / containerEl.current.offsetWidth;
-  //   const brightness = 1 - coordinate.y / containerEl.current.offsetHeight;
-
-  //   const finalRGB = hsbToRgb(hue, saturation, brightness);
-
-  //   setFinalRGB(createRGB(...finalRGB));
-
-  //   //syncPluginRGBToPhotoShop(finalRGB);
-  // }, [coordinate, hue]);
-
-  // useEffect(() => {
-  //   //hsv更改会导致坐标更改呗
-  //   setCoordinate(calculateXYfromSV(saturation, brightness, containerEl));
-  //   setHue(hue);
-  // }, [hue, saturation, Brightness]);
-
-  //
-
   //finalRGB更改，引发其余所有值的变更
   //hsv 还有 对应的 坐标位置。
 
   useEffect(() => {
     //console.log("🚀 ~ useEffect ~ finalRGB:", finalRGB);
-    const r = finalRGB[0];
-    const g = finalRGB[1];
-    const b = finalRGB[2];
+    const r = finalRGB.r;
+    const g = finalRGB.g;
+    const b = finalRGB.b;
 
     const finalHSV = rgbToHsb(r, g, b);
-    //console.log("🚀 ~ useEffect ~ finalHSV:", finalHSV);
 
     const h = finalHSV.h; //有的返回对象 有的返回数组
     const s = finalHSV.s;
     const v = finalHSV.v;
 
-    //setHue(h);
+    if (h) {
+      setHue(h);
+      setPureRGB(hueToRGB(h));
+      sliderRef.current?.setHue(h);
+    }
+
     setSaturation(s);
     setBrightness(v);
 
-    // const xy = calculateXYFromSV(s, v, containerEl);
+    setCoordinate(calculateXYFromSV(s, v, containerEl));
 
-    // setCoordinate(xy);
-
-    // syncPluginRGBToPhotoShop(finalRGB);
+    syncPluginRGBToPhotoShop(finalRGB);
   }, [finalRGB]);
 
   const startDragging = (e: any) => {
@@ -135,16 +128,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     if (dragging) {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
-      setCoordinate({ x, y });
+      //setCoordinate({ x, y });
 
       const saturation = x / containerEl.current.offsetWidth;
       const brightness = 1 - y / containerEl.current.offsetHeight;
       const finalRGB = hsbToRgb(hue, saturation, brightness);
 
       setFinalRGB(finalRGB);
-      //
-      //直接更改finalRGB了。，最后再根据finalRGB反推xy值嘛？
-      //
     }
   };
 
@@ -164,19 +154,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             event.stopPropagation();
             if (dragging) {
               doDrag;
-
-              // const { x, y } = getRelativeCoordinates(
-              //   event,
-              //   containerEl.current
-              // );
-              // setCoordinate({ x, y });
-              // const { x, y } = getRelativeCoordinates(e, containerEl.current);
-              // const saturation = coordinate.x / containerEl.current.offsetWidth;
-              // const brightness =
-              //   1 - coordinate.y / containerEl.current.offsetHeight;
-              // // setCoordinate({ x, y });
-              // const finalRGB = hsbToRgb(hue, saturation, brightness);
-              // setFinalRGB(finalRGB);
             }
           }}
           className="picker-canvas"
@@ -203,10 +180,11 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
         {/* hue滑条 */}
         <ColorSlider
+          ref={sliderRef}
           onValueChange={(hue) => {
-            setHue(hue);
-            setFinalRGB(hsbToRgb(hue, saturation, brightness));
+            // setHue(hue);
             setPureRGB(hueToRGB(hue));
+            setFinalRGB(hsbToRgb(hue, saturation, brightness));
           }}
         />
       </div>
@@ -215,8 +193,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       <div
         className="output"
         style={{
-          //background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
-          background: `rgb(${finalRGB[0]},${finalRGB[1]},${finalRGB[2]})`,
+          background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
+          // background: `rgb(${finalRGB[0]},${finalRGB[1]},${finalRGB[2]})`,
         }}
       ></div>
 
@@ -229,27 +207,52 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             allValues
           );
 
-          if (changed.red) {
-            // setHue(rgbToHue(changed.red, finalRGB.g, finalRGB.b));
-            // setPureRGB(hueToRGB(rgbToHue(changed.red, finalRGB.g, finalRGB.b)));
-            // const tempRGB = createRGB(changed.red, finalRGB.g, finalRGB.b);
-            // setFinalRGB(tempRGB);
+          let tempRGB;
+          if (changed.red != null) {
+            tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
+            console.log("🚀 ~ ColorPicker ~ tempRGB1111:", tempRGB);
+          } else if (changed.green != null) {
+            tempRGB = createRGB(allValues.red, changed.green, allValues.blue);
+          } else if (changed.blue != null) {
+            tempRGB = createRGB(allValues.red, allValues.green, changed.blue);
           }
+
+          if (tempRGB) {
+            console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
+            setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+          }
+        }}
+        onInput={(event) => {
+          const { name, value } = event.target;
+          let tempRGB = { ...finalRGB };
+
+          // 如果输入为空字符串，强制转换为 '0'
+          const newValue = value === "" ? "0" : value;
+
+          // 更新对应颜色值
+          if (name === "red") {
+            tempRGB = createRGB(newValue, allValues.green, allValues.blue);
+          } else if (name === "green") {
+            tempRGB = createRGB(allValues.red, newValue, allValues.blue);
+          } else if (name === "blue") {
+            tempRGB = createRGB(allValues.red, allValues.green, newValue);
+          }
+
+          setFinalRGB(tempRGB);
         }}
         value={{
           hue: hue,
-          saturation: containerEl.current
-            ? coordinate.x / containerEl.current.offsetWidth
-            : 0,
-          brightness: containerEl.current
-            ? 1 - coordinate.y / containerEl.current.offsetHeight
-            : 0,
-          red: finalRGB[0],
-          green: finalRGB[1],
-          blue: finalRGB[2],
-          // red: finalRGB.r,
-          // green: finalRGB.g,
-          // blue: finalRGB.b,
+          saturation: saturation,
+          brightness: brightness,
+          red: finalRGB.r,
+          green: finalRGB.g,
+          blue: finalRGB.b,
+          // hue: Math.round(hue),
+          // saturation: saturation,
+          // brightness: brightness,
+          // red: Math.round(finalRGB.r),
+          // green: Math.round(finalRGB.g),
+          // blue: Math.round(finalRGB.b),
         }}
       />
     </div>

@@ -70,9 +70,9 @@ export function hueToRGB(hue: number): RGB {
     b = x;
   }
 
-  r = Math.round((r + m) * 255);
-  g = Math.round((g + m) * 255);
-  b = Math.round((b + m) * 255);
+  r = (r + m) * 255;
+  g = (g + m) * 255;
+  b = (b + m) * 255;
 
   return createRGB(r, g, b);
 }
@@ -111,11 +111,11 @@ export function hsbToRgb(h: number, s: number, v: number) {
     b = x;
   }
 
-  r = Math.floor((r + m) * 255);
-  g = Math.floor((g + m) * 255);
-  b = Math.floor((b + m) * 255);
+  r = (r + m) * 255;
+  g = (g + m) * 255;
+  b = (b + m) * 255;
 
-  return [r, g, b];
+  return { r, g, b };
 }
 
 export function rgbToHue(r: number, g: number, b: number) {

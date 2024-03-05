@@ -1,16 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, {
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 
 import "./index.css";
 import { debounce } from "lodash-es";
+export type ColorSliderRefType = { setHue: (hue: number) => void };
 
-export default function ColorSlider({
-  onValueChange,
-}: {
-  onValueChange?: (color: number) => void;
-}) {
+export default forwardRef(function ColorSlider(
+  {
+    onValueChange,
+  }: {
+    onValueChange?: (color: number) => void;
+  },
+  dotRef: React.ForwardedRef<ColorSliderRefType>
+) {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+
+  const containerHue = useRef<HTMLDivElement>(null);
 
   const startDragging = (e: any) => {
     setDragging(true);
@@ -20,9 +31,28 @@ export default function ColorSlider({
   const stopDragging = () => {
     setDragging(false);
   };
+  function calculatePositionByHue(h: number) {
+    const totalHeight = containerHue.current.offsetHeight;
+    let position = (1 - h / 360) * totalHeight;
+
+    // 限制位置在滑块范围内
+    position = Math.max(position, 0);
+    position = Math.min(position, totalHeight);
+
+    return position;
+  }
+
+  useImperativeHandle(dotRef, () => {
+    return {
+      setHue(hue: number) {
+        const calculatedPosition = calculatePositionByHue(hue);
+        setPosition(calculatedPosition);
+      },
+    };
+  });
 
   const doDrag = (e: any) => {
-    // e.stopPropagation();
+    e.stopPropagation();
     e.preventDefault();
 
     if (dragging) {
@@ -45,6 +75,7 @@ export default function ColorSlider({
   return (
     <div
       className="slider-container"
+      ref={containerHue}
       // onMouseDown={doDrag}
       onMouseMove={doDrag}
       onMouseLeave={doDrag}
@@ -87,4 +118,4 @@ export default function ColorSlider({
       ></div>
     </div>
   );
-}
+});
