@@ -1,13 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, forwardRef, useImperativeHandle } from "react";
 
 import "./index.css";
 import { debounce } from "lodash-es";
+export type ColorSliderRefType = { setPosition: (value: number) => void }
 
-export default function ColorSlider({
+export default forwardRef(function ColorSlider({
   onValueChange,
 }: {
   onValueChange?: (color: number) => void;
-}) {
+}, dotRef: React.ForwardedRef<ColorSliderRefType>) {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -20,6 +21,12 @@ export default function ColorSlider({
   const stopDragging = () => {
     setDragging(false);
   };
+
+  useImperativeHandle(dotRef, () => {
+    return {
+      setPosition
+    }
+  })
 
   const doDrag = (e: any) => {
     e.stopPropagation();
@@ -87,4 +94,4 @@ export default function ColorSlider({
       ></div>
     </div>
   );
-}
+})

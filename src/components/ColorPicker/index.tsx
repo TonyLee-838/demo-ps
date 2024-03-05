@@ -9,9 +9,10 @@ import {
   hsbToRgb,
   hueToRGB,
   RGB,
+  rgbToHue,
   syncPluginRGBToPhotoShop,
 } from "../../utils";
-import ColorSlider from "../ColorSlider";
+import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
 
 const DEFAULT_RGB = createRGB(255, 0, 0);
@@ -21,6 +22,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const [dragging, setDragging] = useState(false);
 
   const [hue, setHue] = useState(0);
+
+  const sliderRef = useRef<ColorSliderRefType>()
+
 
   const [pureRGB, setPureRGB] = useState<RGB>(DEFAULT_RGB);
   const [finalRGB, setFinalRGB] = useState<RGB>(DEFAULT_RGB);
@@ -146,6 +150,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
         {/* hue滑条 */}
         <ColorSlider
+          ref={sliderRef}
           onValueChange={(hue) => {
             setHue(hue);
           }}
@@ -166,7 +171,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           console.log('!!~ ~ ColorPicker ~ changed, allValues:', changed, allValues);
 
           if (changed.red) {
-            setPureRGB({ ...pureRGB, r: changed.red })
+            setHue(rgbToHue(changed.red, pureRGB.g, pureRGB.b))
+            // setPureRGB({ ...pureRGB, r: changed.red })
           }
 
         }}
