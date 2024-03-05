@@ -22,7 +22,7 @@ export default function ColorSlider({
   };
 
   const doDrag = (e: any) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     e.preventDefault();
 
     if (dragging) {
@@ -47,7 +47,7 @@ export default function ColorSlider({
       className="slider-container"
       // onMouseDown={doDrag}
       onMouseMove={doDrag}
-      // onMouseLeave={doDrag}
+      onMouseLeave={doDrag}
       onMouseUp={stopDragging}
       onClick={(e) => {
         //  console.log("🚀 ~ e:", e);

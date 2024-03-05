@@ -1,7 +1,7 @@
 .colorPicker {
   display: flex;
-  height: 96vh; /* 假设你想要 colorPicker 占据视口高度的 80% */
-  width: 96vw; /* 占据全部视口宽度 */
+  height: 96vh;
+  width: 96vw;
 }
 
 .picker-canvas {

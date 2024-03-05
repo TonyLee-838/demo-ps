@@ -25,25 +25,6 @@ function linearToGammaSpaceExact(value: number) {
   }
 }
 
-// export function linearToSRGB(c: RGB): RGB {
-//   return {
-//     r: linearToGammaSpaceExact(c.r),
-//     g: linearToGammaSpaceExact(c.g),
-//     b: linearToGammaSpaceExact(c.b),
-//   };
-// }
-
-// export function SRGBToLinear(c: RGB) {
-//   // 分别处理c的每个分量（红色、绿色、蓝色）
-//   let linearRGB = {
-//     r: c.r <= 0.04045 ? c.r / 12.92 : Math.pow((c.r + 0.055) / 1.055, 2.4),
-//     g: c.g <= 0.04045 ? c.g / 12.92 : Math.pow((c.g + 0.055) / 1.055, 2.4),
-//     b: c.b <= 0.04045 ? c.b / 12.92 : Math.pow((c.b + 0.055) / 1.055, 2.4),
-//   };
-
-//   return linearRGB;
-// }
-
 function SRGBToLinear(c: number) {
   var linearRGBLo = c / 12.92;
   var linearRGBHi = Math.pow((c + 0.055) / 1.055, 2.4);
@@ -124,7 +105,7 @@ export function hsbToRgb(h: number, s: number, v: number) {
     r = x;
     g = 0;
     b = c;
-  } else if (300 <= h && h < 360) {
+  } else if (300 <= h && h <= 360) {
     r = c;
     g = 0;
     b = x;
@@ -163,6 +144,77 @@ export function rgbToHue(r: number, g: number, b: number) {
 
   return hue; // The hue value will be between 0 and 360
 }
+
+export function rgbToHsb(r: number, g: number, b: number) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  let h, s, v;
+  const min = Math.min(r, g, b);
+  const max = (v = Math.max(r, g, b));
+  const difference = max - min;
+
+  // Saturation calculation
+  s = max === 0 ? 0 : difference / max;
+
+  // Hue calculation
+  //h = 0; // achromatic
+  if (difference === 0) {
+    h = 0;
+  } else {
+    switch (max) {
+      case r:
+        h = (g - b) / difference + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / difference + 2;
+        break;
+      case b:
+        h = (r - g) / difference + 4;
+        break;
+    }
+    h /= 6;
+  }
+  // HSB results from 0 to 1
+  return {
+    h: h * 360, // Convert hue to degrees
+    s: s, // Convert saturation to percentage
+    v: v, // Convert brightness to percentage
+  };
+}
+
+// export function rgbToHsv(r: number, g: number, b: number) {
+//   (r /= 255), (g /= 255), (b /= 255);
+
+//   let max = Math.max(r, g, b),
+//     min = Math.min(r, g, b);
+//   let h,
+//     s,
+//     v = max;
+
+//   let d = max - min;
+//   s = max == 0 ? 0 : d / max;
+
+//   if (max == min) {
+//     h = 0; // achromatic
+//   } else {
+//     switch (max) {
+//       case r:
+//         h = (g - b) / d + (g < b ? 6 : 0);
+//         break;
+//       case g:
+//         h = (b - r) / d + 2;
+//         break;
+//       case b:
+//         h = (r - g) / d + 4;
+//         break;
+//     }
+//     h /= 6;
+//   }
+
+//   return { h: h * 360, s: s, v: v };
+// }
 
 export async function syncPluginRGBToPhotoShop(finalRGB: Number[]) {
   console.log("🚀 ~ syncPluginRGBToPhotoShop ~ finalRGB:", finalRGB);
