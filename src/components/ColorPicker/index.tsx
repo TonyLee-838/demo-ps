@@ -89,6 +89,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   useEffect(() => {
     //console.log("🚀 ~ useEffect ~ finalRGB:", finalRGB);
+
     const r = finalRGB.r;
     const g = finalRGB.g;
     const b = finalRGB.b;
@@ -99,16 +100,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     const s = finalHSV.s;
     const v = finalHSV.v;
 
-    if (h) {
-      setHue(h);
-      setPureRGB(hueToRGB(h));
-      sliderRef.current?.setHue(h);
-    }
+    //setHue(h);
+    //setPureRGB(hueToRGB(h));
+    //sliderRef.current?.setHue(h);
 
-    setSaturation(s);
-    setBrightness(v);
-
-    setCoordinate(calculateXYFromSV(s, v, containerEl));
+    //setSaturation(s);
+    //setBrightness(v);
+    //setCoordinate(calculateXYFromSV(s, v, containerEl));
 
     syncPluginRGBToPhotoShop(finalRGB);
   }, [finalRGB]);
@@ -128,11 +126,14 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     if (dragging) {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
-      //setCoordinate({ x, y });
+      setCoordinate({ x, y });
 
       const saturation = x / containerEl.current.offsetWidth;
       const brightness = 1 - y / containerEl.current.offsetHeight;
       const finalRGB = hsbToRgb(hue, saturation, brightness);
+
+      setSaturation(saturation);
+      setBrightness(brightness);
 
       setFinalRGB(finalRGB);
     }
@@ -182,7 +183,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         <ColorSlider
           ref={sliderRef}
           onValueChange={(hue) => {
-            // setHue(hue);
+            setHue(hue);
             setPureRGB(hueToRGB(hue));
             setFinalRGB(hsbToRgb(hue, saturation, brightness));
           }}
@@ -218,41 +219,34 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           }
 
           if (tempRGB) {
+            //表单的rgb更改 触发hsv的更改。
             console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
+            const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
+            const h = finalHSV.h;
+            const s = finalHSV.s;
+            const v = finalHSV.v;
+            setHue(h);
+            setPureRGB(hueToRGB(h));
+            sliderRef.current?.setHue(h);
+            setSaturation(s);
+            setBrightness(v);
+            setCoordinate(calculateXYFromSV(s, v, containerEl));
             setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
           }
         }}
-        onInput={(event) => {
-          const { name, value } = event.target;
-          let tempRGB = { ...finalRGB };
-
-          // 如果输入为空字符串，强制转换为 '0'
-          const newValue = value === "" ? "0" : value;
-
-          // 更新对应颜色值
-          if (name === "red") {
-            tempRGB = createRGB(newValue, allValues.green, allValues.blue);
-          } else if (name === "green") {
-            tempRGB = createRGB(allValues.red, newValue, allValues.blue);
-          } else if (name === "blue") {
-            tempRGB = createRGB(allValues.red, allValues.green, newValue);
-          }
-
-          setFinalRGB(tempRGB);
-        }}
         value={{
-          hue: hue,
-          saturation: saturation,
-          brightness: brightness,
-          red: finalRGB.r,
-          green: finalRGB.g,
-          blue: finalRGB.b,
-          // hue: Math.round(hue),
+          // hue: hue,
           // saturation: saturation,
           // brightness: brightness,
-          // red: Math.round(finalRGB.r),
-          // green: Math.round(finalRGB.g),
-          // blue: Math.round(finalRGB.b),
+          // red: finalRGB.r,
+          // green: finalRGB.g,
+          // blue: finalRGB.b,
+          hue: Math.round(hue),
+          saturation: saturation,
+          brightness: brightness,
+          red: Math.round(finalRGB.r),
+          green: Math.round(finalRGB.g),
+          blue: Math.round(finalRGB.b),
         }}
       />
     </div>

@@ -216,7 +216,7 @@ export function rgbToHsb(r: number, g: number, b: number) {
 //   return { h: h * 360, s: s, v: v };
 // }
 
-export async function syncPluginRGBToPhotoShop(finalRGB: Number[]) {
+export async function syncPluginRGBToPhotoShop(finalRGB: {}) {
   console.log("🚀 ~ syncPluginRGBToPhotoShop ~ finalRGB:", finalRGB);
   const photoshop = window.require("photoshop").core;
 
@@ -227,9 +227,9 @@ export async function syncPluginRGBToPhotoShop(finalRGB: Number[]) {
       const SolidColor = app.SolidColor;
       const col = new SolidColor();
       //转到 gamma2.2？ 反正ps偏亮， 所以这边是变暗，
-      col.rgb.red = SRGBToLinear(Number(finalRGB[0]) / 255) * 255;
-      col.rgb.green = SRGBToLinear(Number(finalRGB[1]) / 255) * 255;
-      col.rgb.blue = SRGBToLinear(Number(finalRGB[2]) / 255) * 255;
+      col.rgb.red = SRGBToLinear(Number(finalRGB.r) / 255) * 255;
+      col.rgb.green = SRGBToLinear(Number(finalRGB.g) / 255) * 255;
+      col.rgb.blue = SRGBToLinear(Number(finalRGB.b) / 255) * 255;
 
       app.foregroundColor = col;
     } catch (error) {
