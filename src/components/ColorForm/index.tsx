@@ -74,8 +74,9 @@ export default function ColorForm({
               /** 表单改变时触发的事件 */
               onInput={(e) => {
                 /** 表单输入的值，但是是 string类型 */
-                const inputValue = e.target.value;
-                if (inputValue > max) return;
+                const inputValue = (e.target as HTMLInputElement).value;
+
+                if (Number(inputValue) > max) return;
 
                 const partialUpdatedValue = {
                   /** 这里是改变的值，看一下是不是number */

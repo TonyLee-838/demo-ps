@@ -7,16 +7,23 @@ import React, {
 } from "react";
 
 import "./index.css";
-import { debounce } from "lodash-es";
 export type ColorSliderRefType = { setHue: (hue: number) => void };
+export type ColorSliderProps = {
+  onValueChange?: (color: number) => void;
+}
 
-export default forwardRef(function ColorSlider(
-  {
-    onValueChange,
-  }: {
-    onValueChange?: (color: number) => void;
-  },
-  dotRef: React.ForwardedRef<ColorSliderRefType>
+function calculatePositionByHue(h: number, totalHeight: number) {
+  let position = (1 - h / 360) * totalHeight;
+
+  // 限制位置在滑块范围内
+  position = Math.max(position, 0);
+  position = Math.min(position, totalHeight);
+
+  return position;
+}
+
+export default forwardRef<ColorSliderRefType, ColorSliderProps>(function ColorSlider({ onValueChange },
+  dotRef
 ) {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState(0);
@@ -32,21 +39,12 @@ export default forwardRef(function ColorSlider(
   const stopDragging = () => {
     setDragging(false);
   };
-  function calculatePositionByHue(h: number) {
-    const totalHeight = containerHue.current.offsetHeight;
-    let position = (1 - h / 360) * totalHeight;
 
-    // 限制位置在滑块范围内
-    position = Math.max(position, 0);
-    position = Math.min(position, totalHeight);
-
-    return position;
-  }
 
   useImperativeHandle(dotRef, () => {
     return {
       setHue(hue: number) {
-        const calculatedPosition = calculatePositionByHue(hue);
+        const calculatedPosition = calculatePositionByHue(hue, Number(containerHue.current?.offsetHeight));
         setPosition(calculatedPosition);
       },
     };

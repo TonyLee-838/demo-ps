@@ -4,6 +4,12 @@ export interface RGB {
   b: number;
 }
 
+export interface HSV {
+  h: number;
+  s: number;
+  v: number;
+}
+
 export interface Coordinate {
   x: number;
   y: number;
@@ -13,7 +19,7 @@ export function createRGB(r: number, g: number, b: number): RGB {
   return { r, g, b };
 }
 
-export function createHSV(h: number, s: number, v: number): RGB {
+export function createHSV(h: number, s: number, v: number): HSV {
   return { h, s, v };
 }
 
