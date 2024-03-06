@@ -60,6 +60,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   useEffect(() => {
     const mouseUpEventHandler = () => {
       console.log("鼠标抬起啦！！！");
+      setDragging(false);
     };
 
     /** 在全局body上注册一个事件监听 */

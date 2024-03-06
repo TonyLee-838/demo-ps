@@ -55,6 +55,7 @@ export default forwardRef(function ColorSlider(
   useEffect(() => {
     const mouseUpEventHandler = () => {
       console.log("鼠标抬起啦！！！");
+      setDragging(false);
     };
 
     /** 在全局body上注册一个事件监听 */
@@ -69,10 +70,14 @@ export default forwardRef(function ColorSlider(
   const doDrag = (e: any) => {
     // e.stopPropagation();
     // e.preventDefault();
-
+    console.log("🚀dragging!!!!!");
     if (dragging) {
       const sliderRect = e.currentTarget.getBoundingClientRect();
+      console.log("🚀 ~ doDrag ~ sliderRect:", sliderRect);
+
       let newPosition = e.clientY - sliderRect.top; // 改为clientY和top属性
+      console.log("🚀 ~ doDrag ~ clientY:", e.clientY);
+
       newPosition = Math.max(newPosition, 0);
       newPosition = Math.min(newPosition, sliderRect.height); // 改为height属性
 
