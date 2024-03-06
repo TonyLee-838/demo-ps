@@ -33,23 +33,23 @@
       "type": "panel",
       "id": "Panel",
       "label": {
-        "default": "Demo Panel 2"
+        "default": "LinearColorPicker"
       },
       "minimumSize": {
-        "width": 600,
-        "height": 600
+        "width": 200,
+        "height": 200
       },
       "maximumSize": {
         "width": 2000,
         "height": 2000
       },
       "preferredDockedSize": {
-        "width": 230,
-        "height": 300
+        "width": 500,
+        "height": 500
       },
       "preferredFloatingSize": {
-        "width": 230,
-        "height": 300
+        "width": 500,
+        "height": 500
       },
       "icons": [
         {
