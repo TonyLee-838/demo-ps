@@ -106,8 +106,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setBrightness(psHSV.v);
         setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
       }
-
-      //console.log("🚀 ~ useEffect ~ event:", event);
     });
   }, []);
 

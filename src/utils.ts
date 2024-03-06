@@ -1,3 +1,5 @@
+import { throttle } from "lodash-es";
+
 export interface RGB {
   r: number;
   g: number;
@@ -204,7 +206,7 @@ export function rgbToHsb(r: number, g: number, b: number) {
   };
 }
 
-export async function syncPluginRGBToPhotoShop(finalRGB: RGB) {
+export async function RGBToPhotoShop(finalRGB: RGB) {
   const photoshop = window.require("photoshop").core;
 
   async function setColorModal() {
@@ -232,3 +234,5 @@ export async function syncPluginRGBToPhotoShop(finalRGB: RGB) {
     console.error(e);
   }
 }
+
+export const syncPluginRGBToPhotoShop = throttle(RGBToPhotoShop, 100); //间隔100毫秒
