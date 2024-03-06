@@ -72,6 +72,39 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     };
   }, []);
 
+
+
+  useEffect(() => {
+    const doDrag = (e: Event) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (dragging) {
+        const { x, y } = getRelativeCoordinates(e, containerEl.current);
+        setCoordinate({ x, y });
+
+        const saturation = (x / containerEl.current.offsetWidth) * 100;
+        const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
+
+        const finalRGB = hsbToRgb(hue, saturation, brightness);
+
+        setSaturation(saturation);
+        setBrightness(brightness);
+
+        setFinalRGB(finalRGB);
+      }
+    };
+
+
+    /** 在全局body上注册一个事件监听 */
+    document.body.addEventListener("mousemove", doDrag);
+
+    return () => {
+      /** 退出时要清除监听，防止内存泄漏 */
+      document.body.removeEventListener("mousemove", doDrag);
+    };
+  }, [dragging])
+
   useEffect(() => {
     syncPluginRGBToPhotoShop(finalRGB);
   }, [finalRGB]);
@@ -85,7 +118,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     setDragging(false);
   };
 
-  const doDrag = (e: any) => {
+  const doDrag = (e: Event) => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -109,8 +142,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     <div className="colorPicker">
       <div
         className="canvas-container"
-        onMouseMove={doDrag}
-        onMouseLeave={doDrag}
+        // onMouseMove={doDrag}
+        // onMouseLeave={doDrag}
         onMouseUp={stopDragging}
       >
         <div
@@ -119,9 +152,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            if (dragging) {
-              doDrag;
-            }
+
+            doDrag(event);
           }}
           className="picker-canvas"
           style={{

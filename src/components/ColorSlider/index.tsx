@@ -53,6 +53,11 @@ export default forwardRef(function ColorSlider(
   });
 
   useEffect(() => {
+
+  })
+
+
+  useEffect(() => {
     const mouseUpEventHandler = () => {
       console.log("鼠标抬起啦！！！");
       setDragging(false);
