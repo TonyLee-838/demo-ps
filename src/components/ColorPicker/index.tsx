@@ -63,6 +63,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   const [dragging, setDragging] = useState(false);
 
+  const [ifPassCol, setIfPassCol] = useState(false);
+
   const sliderRef = useRef<ColorSliderRefType>(null);
 
   const [hue, setHue] = useState(0);
@@ -90,7 +92,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   }, []);
 
   /** 保证重新渲染时，函数的引用不变 */
-  const dragHandler = useCallback((e: DragMouseEvent) => {
+  const dragHandler = (e: DragMouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -102,12 +104,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
 
       const finalRGB = hsbToRgb(hue, saturation, brightness);
-
       setSaturation(saturation);
       setBrightness(brightness);
       setFinalRGB(finalRGB);
+      setIfPassCol(true);
+      //syncPluginRGBToPhotoShop(finalRGB);
     }
-  }, []);
+  };
 
   useEffect(() => {
     if (dragging) {
@@ -118,14 +121,16 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
 
     return () => {
-      /** 退出时要清除监听，防止内存泄漏 */
       document.body.removeEventListener("mousemove", dragHandler);
     };
   }, [dragging]);
 
   useEffect(() => {
-    syncPluginRGBToPhotoShop(finalRGB);
-  }, [finalRGB]);
+    if (ifPassCol) {
+      syncPluginRGBToPhotoShop(finalRGB);
+    }
+    setIfPassCol(false);
+  }, [ifPassCol]);
 
   const startDragging = (e: DragMouseEvent) => {
     setDragging(true);
@@ -146,15 +151,19 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
       const saturation = (x / containerEl.current.offsetWidth) * 100;
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
-
       const finalRGB = hsbToRgb(hue, saturation, brightness);
-
       setSaturation(saturation);
       setBrightness(brightness);
 
       setFinalRGB(finalRGB);
+      setIfPassCol(true);
+      //syncPluginRGBToPhotoShop(finalRGB);
     }
   };
+
+  // function dragHueSlider(hue: number) {
+  //   setFinalRGB(hsbToRgb(hue, saturation, brightness));
+  // }
 
   return (
     <div className="colorPicker">
@@ -197,94 +206,99 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             setHue(hue);
             setPureRGB(hueToRGB(hue));
             setFinalRGB(hsbToRgb(hue, saturation, brightness));
+            setIfPassCol(true);
+            //syncPluginRGBToPhotoShop(finalRGB);
           }}
         />
       </div>
 
-      {/* 展示颜色的方块 */}
-      <div
-        className="output"
-        style={{
-          background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
-          // background: `rgb(${finalRGB[0]},${finalRGB[1]},${finalRGB[2]})`,
-        }}
-      ></div>
+      <div className="colorBlockAndForm">
+        {/* 展示颜色的方块 */}
+        <div
+          className="output"
+          style={{
+            background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
+          }}
+        ></div>
 
-      {/* 展示数值的 */}
-      <ColorForm
-        onChange={(changed, allValues) => {
-          if (!containerEl.current) {
-            return;
-          }
+        {/* 展示数值的 */}
+        <ColorForm
+          onChange={(changed, allValues) => {
+            if (!containerEl.current) {
+              return;
+            }
 
-          let tempRGB: RGB | null = null;
-          if (changed.red != null) {
-            tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
-          } else if (changed.green != null) {
-            tempRGB = createRGB(allValues.red, changed.green, allValues.blue);
-          } else if (changed.blue != null) {
-            tempRGB = createRGB(allValues.red, allValues.green, changed.blue);
-          }
-          if (tempRGB) {
-            //表单的rgb更改 触发hsv的更改。
-            const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
-            const h = finalHSV.h;
-            const s = finalHSV.s;
-            const v = finalHSV.v;
-            setHue(h);
-            setPureRGB(hueToRGB(h));
-            sliderRef.current?.setHue(h);
-            setSaturation(s);
-            setBrightness(v);
-            setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-            setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
-          }
+            let tempRGB: RGB | null = null;
+            if (changed.red != null) {
+              tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
+            } else if (changed.green != null) {
+              tempRGB = createRGB(allValues.red, changed.green, allValues.blue);
+            } else if (changed.blue != null) {
+              tempRGB = createRGB(allValues.red, allValues.green, changed.blue);
+            }
+            if (tempRGB) {
+              //表单的rgb更改 触发hsv的更改。
+              const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
+              const h = finalHSV.h;
+              const s = finalHSV.s;
+              const v = finalHSV.v;
+              setHue(h);
+              setPureRGB(hueToRGB(h));
+              sliderRef.current?.setHue(h);
+              setSaturation(s);
+              setBrightness(v);
+              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+              setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+              setIfPassCol(true);
+              //syncPluginRGBToPhotoShop(finalRGB);
+            }
 
-          let tempHSV: HSV | null = null;
-          if (changed.hue != null) {
-            tempHSV = createHSV(
-              changed.hue,
-              allValues.saturation,
-              allValues.brightness
-            );
-          } else if (changed.saturation != null) {
-            tempHSV = createHSV(
-              allValues.hue,
-              changed.saturation,
-              allValues.brightness
-            );
-          } else if (changed.brightness != null) {
-            tempHSV = createHSV(
-              allValues.hue,
-              allValues.saturation,
-              changed.brightness
-            );
-          }
-          if (tempHSV) {
-            const h = tempHSV.h;
-            const s = tempHSV.s;
-            const v = tempHSV.v;
-            setHue(h);
-            setPureRGB(hueToRGB(h));
-            sliderRef.current?.setHue(h);
-            setSaturation(s);
-            setBrightness(v);
-            setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-
-            const tempRGB = hsbToRgb(h, s, v);
-
-            setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
-          }
-        }}
-        value={{
-          hue: Math.round(hue),
-          saturation: saturation,
-          brightness: brightness,
-          red: Math.round(finalRGB.r),
-          green: Math.round(finalRGB.g),
-          blue: Math.round(finalRGB.b),
-        }}
-      />
+            let tempHSV: HSV | null = null;
+            if (changed.hue != null) {
+              tempHSV = createHSV(
+                changed.hue,
+                allValues.saturation,
+                allValues.brightness
+              );
+            } else if (changed.saturation != null) {
+              tempHSV = createHSV(
+                allValues.hue,
+                changed.saturation,
+                allValues.brightness
+              );
+            } else if (changed.brightness != null) {
+              tempHSV = createHSV(
+                allValues.hue,
+                allValues.saturation,
+                changed.brightness
+              );
+            }
+            if (tempHSV) {
+              const h = tempHSV.h;
+              const s = tempHSV.s;
+              const v = tempHSV.v;
+              setHue(h);
+              setPureRGB(hueToRGB(h));
+              sliderRef.current?.setHue(h);
+              setSaturation(s);
+              setBrightness(v);
+              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+              const tempRGB = hsbToRgb(h, s, v);
+              setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+              setIfPassCol(true);
+              //  syncPluginRGBToPhotoShop(finalRGB);
+            }
+          }}
+          value={{
+            hue: Math.round(hue),
+            saturation: saturation,
+            brightness: brightness,
+            red: Math.round(finalRGB.r),
+            green: Math.round(finalRGB.g),
+            blue: Math.round(finalRGB.b),
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -68,7 +68,7 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(
       };
     }, []);
 
-    const dragHandler = useCallback((e: DragMouseEvent) => {
+    const dragHandler = (e: DragMouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
 
@@ -87,12 +87,11 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(
 
         setPosition(newPosition);
       }
-    }, []);
+    };
 
     const doDrag = (e: DragMouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
-      //console.log("🚀dragging!!!!!");
       if (dragging && containerRef.current) {
         const sliderRect = containerRef.current.getBoundingClientRect();
         let newPosition = e.clientY - sliderRect.top; // 改为clientY和top属性
@@ -125,6 +124,7 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(
         className="slider-container"
         ref={containerRef}
         onMouseDown={startDragging}
+        onMouseUp={stopDragging}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();

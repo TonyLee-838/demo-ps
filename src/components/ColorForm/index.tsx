@@ -6,34 +6,41 @@ interface Field {
   name: string;
   isPercentage?: boolean;
   max: number;
+  displayName: string;
 }
 
 const FormConfig: Field[] = [
   {
     name: "red",
     max: 255,
+    displayName: "R",
   },
   {
     name: "green",
     max: 255,
+    displayName: "G",
   },
   {
     name: "blue",
     max: 255,
+    displayName: "B",
   },
   {
     name: "hue",
     max: 360,
+    displayName: "H",
   },
   {
     name: "saturation",
     max: 100,
     isPercentage: true,
+    displayName: "S",
   },
   {
     name: "brightness",
     max: 100,
     isPercentage: true,
+    displayName: "V",
   },
 ];
 
@@ -55,7 +62,7 @@ export default function ColorForm({
 }) {
   return (
     <div className="form">
-      {FormConfig.map(({ max, name, isPercentage }) => {
+      {FormConfig.map(({ max, name, isPercentage, displayName }) => {
         let val = value[name as keyof Input];
 
         // if (isPercentage) {
@@ -65,7 +72,7 @@ export default function ColorForm({
 
         return (
           <div className="item" key={`form_item_${name}`}>
-            <div className="label">{name}</div>
+            <div className="label">{displayName}</div>
             <input
               className="input"
               max={max}

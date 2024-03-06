@@ -12,7 +12,7 @@
   outline: 2px solid #8c8c8c;
   margin-right: 8px;
   width: 70vw;
-  height: 80vh;
+  height: 90vh;
 }
 
 .colorPicker .color:after {
@@ -28,14 +28,21 @@
 }
 
 .canvas-container {
+  margin: auto;
   display: flex;
-  height: 90vh; /* 假设你想让 canvas-container 占据视口高度的 70% */
+  height: 90vh;
   width: 80vw;
 }
 
+.colorBlockAndForm {
+  margin: auto;
+  display: Table Layout;
+  height: 90vh;
+}
+
 .output {
-  width: 10vh;
-  height: 10vh;
+  width: 12vh;
+  height: 12vh;
   margin-left: 8px;
   border-radius: 4px;
 }
