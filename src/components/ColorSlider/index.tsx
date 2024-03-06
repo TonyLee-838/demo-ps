@@ -27,9 +27,9 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(function ColorSl
 ) {
   const [dragging, setDragging] = useState(false);
   const [position, setPosition] = useState(0);
+  
   const ref = useRef<HTMLDivElement>(null);
-
-  const containerHue = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const startDragging = (e: any) => {
     setDragging(true);
@@ -44,15 +44,13 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(function ColorSl
   useImperativeHandle(dotRef, () => {
     return {
       setHue(hue: number) {
-        const calculatedPosition = calculatePositionByHue(hue, Number(containerHue.current?.offsetHeight));
+        const calculatedPosition = calculatePositionByHue(hue, Number(containerRef.current?.offsetHeight));
         setPosition(calculatedPosition);
       },
     };
   });
 
-  useEffect(() => {
 
-  })
 
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(function ColorSl
     };
   }, []);
 
-  const doDrag = (e: any) => {
+  const doDrag = (e: React.MouseEvent) => {
     // e.stopPropagation();
     // e.preventDefault();
     console.log("🚀dragging!!!!!");
@@ -98,7 +96,7 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(function ColorSl
   return (
     <div
       className="slider-container"
-      ref={containerHue}
+      ref={containerRef}
       // onMouseDown={doDrag}
       onMouseMove={doDrag}
       onMouseLeave={doDrag}

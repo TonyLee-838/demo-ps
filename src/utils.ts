@@ -162,7 +162,12 @@ export function rgbToHsb(r: number, g: number, b: number) {
   g /= 255;
   b /= 255;
 
-  let h, s, v;
+
+  /** NOTE: 这里要额外看下对不对 */
+  let h = 0;
+  let s = 0;
+  let v = 0
+  
   const min = Math.min(r, g, b);
   const max = (v = Math.max(r, g, b));
   const difference = max - min;
@@ -196,7 +201,7 @@ export function rgbToHsb(r: number, g: number, b: number) {
   };
 }
 
-export async function syncPluginRGBToPhotoShop(finalRGB: {}) {
+export async function syncPluginRGBToPhotoShop(finalRGB: RGB) {
   const photoshop = window.require("photoshop").core;
 
   async function setColorModal() {

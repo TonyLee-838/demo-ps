@@ -123,7 +123,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     syncPluginRGBToPhotoShop(finalRGB);
   }, [finalRGB]);
 
-  const startDragging = (e: any) => {
+  const startDragging = (e: DragMouseEvent) => {
     setDragging(true);
     e.preventDefault(); // 防止鼠标光标选中页面上的其他元素
   };
