@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import "./index.css";
@@ -17,19 +16,23 @@ import {
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
 
-const DEFAULT_RGB = createRGB(255, 0, 0);
+const DEFAULT_RGB = createRGB(255, 255, 255);
+const DEFAULT_PureRGB = createRGB(255, 0, 0);
 
 type DragMouseEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent;
 
-function getRelativeCoordinates(event: DragMouseEvent, element: HTMLDivElement) {
+function getRelativeCoordinates(
+  event: DragMouseEvent,
+  element: HTMLDivElement
+) {
   // 获取元素的边界信息
   const bounds = element?.getBoundingClientRect();
 
-  if(!bounds) {
+  if (!bounds) {
     return {
       x: 0,
-      y: 0
-    }
+      y: 0,
+    };
   }
 
   // 计算相对坐标
@@ -45,7 +48,11 @@ function getRelativeCoordinates(event: DragMouseEvent, element: HTMLDivElement) 
   return { x, y };
 }
 
-function calculateXYFromSV(saturation: number, brightness: number, element: HTMLDivElement) {
+function calculateXYFromSV(
+  saturation: number,
+  brightness: number,
+  element: HTMLDivElement
+) {
   const x = (saturation / 100) * element.offsetWidth;
   const y = (1 - brightness / 100) * element.offsetHeight;
   return { x, y };
@@ -59,18 +66,17 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const sliderRef = useRef<ColorSliderRefType>(null);
 
   const [hue, setHue] = useState(0);
-  const [saturation, setSaturation] = useState(1);
-  const [brightness, setBrightness] = useState(1);
+  const [saturation, setSaturation] = useState(0);
+  const [brightness, setBrightness] = useState(100);
 
-  const [pureRGB, setPureRGB] = useState<RGB>(DEFAULT_RGB);
+  const [pureRGB, setPureRGB] = useState<RGB>(DEFAULT_PureRGB);
   const [finalRGB, setFinalRGB] = useState<RGB>(DEFAULT_RGB);
 
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
 
-
   useEffect(() => {
     const mouseUpEventHandler = () => {
-      console.log("鼠标抬起啦！！！");
+      // console.log("鼠标抬起啦！！！");
       setDragging(false);
     };
 
@@ -83,7 +89,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     };
   }, []);
 
-
   /** 保证重新渲染时，函数的引用不变 */
   const dragHandler = useCallback((e: DragMouseEvent) => {
     e.stopPropagation();
@@ -92,7 +97,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     if (containerEl.current) {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
       setCoordinate({ x, y });
-
 
       const saturation = (x / containerEl.current.offsetWidth) * 100;
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
@@ -103,21 +107,21 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       setBrightness(brightness);
       setFinalRGB(finalRGB);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    if(dragging) {
+    if (dragging) {
       /** 在全局body上注册一个事件监听 */
       document.body.addEventListener("mousemove", dragHandler);
     } else {
-      document.body.addEventListener("mousemove", dragHandler);
+      // document.body.addEventListener("mousemove", dragHandler);
     }
 
     return () => {
       /** 退出时要清除监听，防止内存泄漏 */
       document.body.removeEventListener("mousemove", dragHandler);
     };
-  }, [dragging])
+  }, [dragging]);
 
   useEffect(() => {
     syncPluginRGBToPhotoShop(finalRGB);
@@ -136,29 +140,25 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     e.stopPropagation();
     e.preventDefault();
 
-    if(dragging && containerEl.current) {
+    if (dragging && containerEl.current) {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
       setCoordinate({ x, y });
-  
+
       const saturation = (x / containerEl.current.offsetWidth) * 100;
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
-  
+
       const finalRGB = hsbToRgb(hue, saturation, brightness);
-  
+
       setSaturation(saturation);
       setBrightness(brightness);
-  
+
       setFinalRGB(finalRGB);
     }
-    
   };
 
   return (
     <div className="colorPicker">
-      <div
-        className="canvas-container"
-        onMouseUp={stopDragging}
-      >
+      <div className="canvas-container" onMouseUp={stopDragging}>
         <div
           onMouseDown={startDragging}
           ref={containerEl}
@@ -213,11 +213,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       {/* 展示数值的 */}
       <ColorForm
         onChange={(changed, allValues) => {
-          if(!containerEl.current) {
+          if (!containerEl.current) {
             return;
           }
 
-       
           let tempRGB: RGB | null = null;
           if (changed.red != null) {
             tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
@@ -270,7 +269,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             sliderRef.current?.setHue(h);
             setSaturation(s);
             setBrightness(v);
-            setCoordinate(calculateXYFromSV(s, v,  containerEl.current));
+            setCoordinate(calculateXYFromSV(s, v, containerEl.current));
 
             const tempRGB = hsbToRgb(h, s, v);
 
