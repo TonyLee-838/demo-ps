@@ -23,16 +23,20 @@ export function createHSV(h: number, s: number, v: number): HSV {
   return { h, s, v };
 }
 
-function linearToGammaSpaceExact(value: number) {
+export function linearToGammaSpaceExact(value: number) {
+  value /= 255;
+  let col;
   if (value <= 0.0) {
-    return 0.0;
+    col = 0.0;
   } else if (value <= 0.0031308) {
-    return 12.92 * value;
+    col = 12.92 * value;
   } else if (value < 1.0) {
-    return 1.055 * Math.pow(value, 0.4166667) - 0.055;
+    col = 1.055 * Math.pow(value, 0.4166667) - 0.055;
   } else {
-    return Math.pow(value, 0.45454545);
+    col = Math.pow(value, 0.45454545);
   }
+  // return col;
+  return col * 255;
 }
 
 function SRGBToLinear(c: number) {
@@ -162,12 +166,11 @@ export function rgbToHsb(r: number, g: number, b: number) {
   g /= 255;
   b /= 255;
 
-
   /** NOTE: 这里要额外看下对不对 */
   let h = 0;
   let s = 0;
-  let v = 0
-  
+  let v = 0;
+
   const min = Math.min(r, g, b);
   const max = (v = Math.max(r, g, b));
   const difference = max - min;

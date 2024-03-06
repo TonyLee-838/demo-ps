@@ -10,6 +10,7 @@ import {
   RGB,
   rgbToHue,
   rgbToHsb,
+  linearToGammaSpaceExact,
   syncPluginRGBToPhotoShop,
   HSV,
 } from "../../utils";
@@ -75,6 +76,40 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const [finalRGB, setFinalRGB] = useState<RGB>(DEFAULT_RGB);
 
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    // const photoshop = window.require("photoshop").action;
+    // function listener() {
+    //   console.log("Foreground color changed");
+    // }
+    // photoshop.addNotificationListener(["set"], listener);
+    const photoshop = window.require("photoshop");
+    const app = photoshop.app;
+    const action = photoshop.action;
+    action.addNotificationListener(["set"], (event, descriptor) => {
+      //descriptor._target?.[0]?._property获取，确认是否为前景色
+      const property = descriptor._target?.[0]?._property;
+      if (property == "foregroundColor") {
+        const gammaRed = linearToGammaSpaceExact(app.foregroundColor.rgb.red);
+        const gammaGreen = linearToGammaSpaceExact(
+          app.foregroundColor.rgb.green
+        );
+        const gammaBlue = linearToGammaSpaceExact(app.foregroundColor.rgb.blue);
+        const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
+
+        setFinalRGB(psCol);
+        const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
+        setHue(psHSV.h);
+        setPureRGB(hueToRGB(psHSV.h));
+        sliderRef.current?.setHue(psHSV.h);
+        setSaturation(psHSV.s);
+        setBrightness(psHSV.v);
+        setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
+      }
+
+      //console.log("🚀 ~ useEffect ~ event:", event);
+    });
+  }, []);
 
   useEffect(() => {
     const mouseUpEventHandler = () => {
@@ -160,10 +195,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       //syncPluginRGBToPhotoShop(finalRGB);
     }
   };
-
-  // function dragHueSlider(hue: number) {
-  //   setFinalRGB(hsbToRgb(hue, saturation, brightness));
-  // }
 
   return (
     <div className="colorPicker">
