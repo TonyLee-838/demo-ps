@@ -1,6 +1,6 @@
 {
-  "id": "Test-bm5ylp",
-  "name": "test-plugin",
+  "id": "ColorPicker",
+  "name": "CustomColorPicker",
   "version": "1.0.0",
   "main": "index.html",
   "manifestVersion": 5,
