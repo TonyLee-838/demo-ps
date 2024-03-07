@@ -13,6 +13,8 @@ import {
   linearToGammaSpaceExact,
   syncPluginRGBToPhotoShop,
   HSV,
+  hexToRgb,
+  rgbToHex,
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
@@ -74,6 +76,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   const [pureRGB, setPureRGB] = useState<RGB>(DEFAULT_PureRGB);
   const [finalRGB, setFinalRGB] = useState<RGB>(DEFAULT_RGB);
+  const [hexRGB, setHexRGB] = useState("ffffff");
 
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
 
@@ -98,6 +101,14 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
 
         setFinalRGB(psCol);
+
+        const psColRound = createRGB(
+          Math.round(gammaRed),
+          Math.round(gammaGreen),
+          Math.round(gammaBlue)
+        );
+        setHexRGB(rgbToHex(psColRound));
+
         const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
         setHue(psHSV.h);
         setPureRGB(hueToRGB(psHSV.h));
@@ -140,6 +151,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       setSaturation(saturation);
       setBrightness(brightness);
       setFinalRGB(finalRGB);
+      const ColRound = createRGB(
+        Math.round(finalRGB.r),
+        Math.round(finalRGB.g),
+        Math.round(finalRGB.b)
+      );
+      setHexRGB(rgbToHex(ColRound));
+
       setIfPassCol(true);
       //syncPluginRGBToPhotoShop(finalRGB);
     }
@@ -187,8 +205,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       const finalRGB = hsbToRgb(hue, saturation, brightness);
       setSaturation(saturation);
       setBrightness(brightness);
-
-      setFinalRGB(finalRGB);
+      setHexRGB(rgbToHex(finalRGB));
+      const ColRound = createRGB(
+        Math.round(finalRGB.r),
+        Math.round(finalRGB.g),
+        Math.round(finalRGB.b)
+      );
+      setFinalRGB(ColRound);
       setIfPassCol(true);
       //syncPluginRGBToPhotoShop(finalRGB);
     }
@@ -234,7 +257,16 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           onValueChange={(hue) => {
             setHue(hue);
             setPureRGB(hueToRGB(hue));
-            setFinalRGB(hsbToRgb(hue, saturation, brightness));
+            const tempRGB = hsbToRgb(hue, saturation, brightness);
+            setFinalRGB(tempRGB);
+
+            const ColRound = createRGB(
+              Math.round(tempRGB.r),
+              Math.round(tempRGB.g),
+              Math.round(tempRGB.b)
+            );
+            setHexRGB(rgbToHex(ColRound));
+
             setIfPassCol(true);
             //syncPluginRGBToPhotoShop(finalRGB);
           }}
@@ -256,7 +288,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             if (!containerEl.current) {
               return;
             }
-
             let tempRGB: RGB | null = null;
             if (changed.red != null) {
               tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
@@ -278,9 +309,17 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               setBrightness(v);
               setCoordinate(calculateXYFromSV(s, v, containerEl.current));
               setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+
+              const ColRound = createRGB(
+                Math.round(tempRGB.r),
+                Math.round(tempRGB.g),
+                Math.round(tempRGB.b)
+              );
+              setHexRGB(rgbToHex(ColRound));
               setIfPassCol(true);
               //syncPluginRGBToPhotoShop(finalRGB);
             }
+            //  console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
 
             let tempHSV: HSV | null = null;
             if (changed.hue != null) {
@@ -314,6 +353,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               setCoordinate(calculateXYFromSV(s, v, containerEl.current));
               const tempRGB = hsbToRgb(h, s, v);
               setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+              const ColRound = createRGB(
+                Math.round(tempRGB.r),
+                Math.round(tempRGB.g),
+                Math.round(tempRGB.b)
+              );
+              setHexRGB(rgbToHex(ColRound));
+
               setIfPassCol(true);
               //  syncPluginRGBToPhotoShop(finalRGB);
             }
@@ -340,8 +386,24 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             type="text"
             onInput={(e) => {
               const inputValue = (e.target as HTMLInputElement).value;
-              console.log("🚀 ~ ColorPicker ~ inputValue:", inputValue);
+              setHexRGB(inputValue);
+              const tempRGB = hexToRgb(inputValue);
+              const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
+              const h = finalHSV.h;
+              const s = finalHSV.s;
+              const v = finalHSV.v;
+              setHue(h);
+              setPureRGB(hueToRGB(h));
+              sliderRef.current?.setHue(h);
+              setSaturation(s);
+              setBrightness(v);
+              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+              setFinalRGB(tempRGB);
+              setIfPassCol(true);
+
+              //console.log("🚀 ~ ColorPicker ~ rgb:", rgb);
             }}
+            value={hexRGB}
           ></input>
         </div>
       </div>

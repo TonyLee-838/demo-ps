@@ -236,3 +236,36 @@ export async function RGBToPhotoShop(finalRGB: RGB) {
 }
 
 export const syncPluginRGBToPhotoShop = throttle(RGBToPhotoShop, 100); //间隔100毫秒
+
+export function hexToRgb(hex: string): RGB {
+  // 移除十六进制颜色值前的 '#' 符号（如果存在）
+  hex = hex.replace(/^#/, "");
+
+  // 如果长度小于6位，则自动补零
+  if (hex.length < 6) {
+    hex = hex.padStart(6, "0");
+  }
+
+  // 将十六进制值按照颜色分成三个部分
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return { r, g, b };
+}
+
+export function rgbToHex(rgb: RGB): string {
+  // 将一个颜色通道的数值转换为十六进制的字符串
+  const toHex = (colorValue: number): string => {
+    // 将十进制颜色值转换为十六进制
+    const hex = colorValue.toString(16);
+    // 十六进制是两位数，不足两位数前面补0
+    return hex.padStart(2, "0");
+  };
+
+  // 使用解构赋值从对象中获取r, g, b值
+  const { r, g, b } = rgb;
+
+  // 返回完整的十六进制颜色代码
+  return toHex(r) + toHex(g) + toHex(b);
+}
