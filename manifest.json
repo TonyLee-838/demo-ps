@@ -1,6 +1,6 @@
 {
   "id": "ColorPicker",
-  "name": "CustomColorPicker",
+  "name": "LinearColorPicker",
   "version": "1.0.0",
   "main": "index.html",
   "manifestVersion": 5,

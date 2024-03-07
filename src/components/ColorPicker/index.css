@@ -1,3 +1,9 @@
+label {
+  text-align: center;
+  display: block; /* 使label占满容器宽度 */
+  font-size: 14px;
+}
+
 .colorPicker {
   display: flex;
   height: 96vh;
@@ -47,6 +53,19 @@
   height: 15vw;
   margin-left: 8px;
   border-radius: 4px;
+}
+
+.hexRGB {
+  font-size: 13px;
+  display: flex; /* 使用flex布局 */
+  align-items: center; /* 垂直居中 */
+  margin-left: 16px;
+}
+
+.hexRGB input {
+  display: block;
+  margin-left: 8px;
+  width: 8vw;
 }
 
 .click-position-dot {

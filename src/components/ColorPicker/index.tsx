@@ -325,8 +325,25 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             red: Math.round(finalRGB.r),
             green: Math.round(finalRGB.g),
             blue: Math.round(finalRGB.b),
+            // hue: Math.round(hue),
+            // saturation: saturation,
+            // brightness: brightness,
+            // red: finalRGB.r,
+            // green: finalRGB.g,
+            // blue: finalRGB.b,
           }}
         />
+
+        <div className="hexRGB">
+          <span>#</span>
+          <input
+            type="text"
+            onInput={(e) => {
+              const inputValue = (e.target as HTMLInputElement).value;
+              console.log("🚀 ~ ColorPicker ~ inputValue:", inputValue);
+            }}
+          ></input>
+        </div>
       </div>
     </div>
   );

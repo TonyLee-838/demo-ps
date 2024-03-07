@@ -65,11 +65,6 @@ export default function ColorForm({
       {FormConfig.map(({ max, name, isPercentage, displayName }) => {
         let val = value[name as keyof Input];
 
-        // if (isPercentage) {
-        //   val *= 100;
-        //   val = Math.round(Number(val));
-        // }
-
         return (
           <div className="item" key={`form_item_${name}`}>
             <div className="label">{displayName}</div>
