@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import "./index.css"; // 引入CSS文件
 
-const ColorSwitcher: React.FC = () => {
-  // 设置前景色和背景色的state
-  const [foregroundColor, setForegroundColor] = useState<string>("#ff0000");
-  const [backgroundColor, setBackgroundColor] = useState<string>("#00ff00");
+type ColorSwitcherProps = {
+  foregroundColor: string;
+  backgroundColor: string;
+  onColorSelect: (color: "foreground" | "background") => void;
+};
+
+const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
+  foregroundColor,
+  backgroundColor,
+  onColorSelect,
+}) => {
   const [selected, setSelected] = useState<"foreground" | "background">(
     "foreground"
   );
 
   // 选中前景色或背景色
   const selectColor = (color: "foreground" | "background") => {
-    setSelected(color);
+    setSelected(color); // 设置选中状态
+    onColorSelect(color); // 调用父组件的回调函数
   };
 
   return (

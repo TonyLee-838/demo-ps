@@ -63,6 +63,23 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const [hexRGB, setHexRGB] = useState("ffffff");
 
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
+  const [foregroundColor, setForegroundColor] = useState<string>("#ff0000");
+  const [backgroundColor, setBackgroundColor] = useState<string>("#00ff00");
+  const [selectedColorType, setSelectedColorType] = useState<
+    "foreground" | "background"
+  >("foreground");
+  const handleColorSelect = (
+    colorType: "foreground" | "background",
+    color: string
+  ) => {
+    if (colorType === "foreground") {
+      setForegroundColor(color);
+    } else {
+      setBackgroundColor(color);
+    }
+    setSelectedColorType(colorType);
+    console.log("🚀 ~ ColorPicker ~ colorType:", colorType);
+  };
 
   useEffect(() => {
     const photoshop = window.require("photoshop");
@@ -206,7 +223,11 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       <div className="colorPicker">
         <div className="canvas-container" onMouseUp={stopDragging}>
           <div className="colorSwitcher">
-            <ColorSwitcher></ColorSwitcher>
+            <ColorSwitcher
+              foregroundColor={"#" + hexRGB}
+              backgroundColor={backgroundColor}
+              onColorSelect={handleColorSelect}
+            />
           </div>
           <div
             onMouseDown={startDragging}
