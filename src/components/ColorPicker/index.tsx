@@ -15,6 +15,7 @@ import {
   HSV,
   hexToRgb,
   rgbToHex,
+  calculateXYFromSV,
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
@@ -23,41 +24,23 @@ const DEFAULT_RGB = createRGB(255, 255, 255);
 const DEFAULT_PureRGB = createRGB(255, 0, 0);
 
 type DragMouseEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent;
-
 function getRelativeCoordinates(
   event: DragMouseEvent,
   element: HTMLDivElement
 ) {
-  // 获取元素的边界信息
   const bounds = element?.getBoundingClientRect();
-
   if (!bounds) {
     return {
       x: 0,
       y: 0,
     };
   }
-
-  // 计算相对坐标
   let x = event.clientX - bounds.left;
   let y = event.clientY - bounds.top;
-
   x = Math.max(x, 0);
-  x = Math.min(x, bounds.width); // 改为height属性
-
+  x = Math.min(x, bounds.width);
   y = Math.max(y, 0);
   y = Math.min(y, bounds.height);
-
-  return { x, y };
-}
-
-function calculateXYFromSV(
-  saturation: number,
-  brightness: number,
-  element: HTMLDivElement
-) {
-  const x = (saturation / 100) * element.offsetWidth;
-  const y = (1 - brightness / 100) * element.offsetHeight;
   return { x, y };
 }
 
@@ -81,11 +64,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   const [coordinate, setCoordinate] = useState<Coordinate>({ x: 0, y: 0 });
 
   useEffect(() => {
-    // const photoshop = window.require("photoshop").action;
-    // function listener() {
-    //   console.log("Foreground color changed");
-    // }
-    // photoshop.addNotificationListener(["set"], listener);
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
     const action = photoshop.action;
@@ -116,6 +94,11 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setSaturation(psHSV.s);
         setBrightness(psHSV.v);
         setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
+      } else if (property == "backgroundColor") {
+        console.log(
+          "🚀 ~ action.addNotificationListener ~ property:",
+          property
+        );
       }
     });
   }, []);
@@ -319,7 +302,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               setIfPassCol(true);
               //syncPluginRGBToPhotoShop(finalRGB);
             }
-            //  console.log("🚀 ~ ColorPicker ~ tempRGB:", tempRGB);
 
             let tempHSV: HSV | null = null;
             if (changed.hue != null) {

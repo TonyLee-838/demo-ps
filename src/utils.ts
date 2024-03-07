@@ -269,3 +269,12 @@ export function rgbToHex(rgb: RGB): string {
   // 返回完整的十六进制颜色代码
   return toHex(r) + toHex(g) + toHex(b);
 }
+export function calculateXYFromSV(
+  saturation: number,
+  brightness: number,
+  element: HTMLDivElement
+) {
+  const x = (saturation / 100) * element.offsetWidth;
+  const y = (1 - brightness / 100) * element.offsetHeight;
+  return { x, y };
+}
