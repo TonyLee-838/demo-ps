@@ -68,13 +68,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     y: 0,
   });
 
-  // const [foregroundColor, setForegroundColor] = useState<string>("#ff0000");
-  // const [backgroundColor, setBackgroundColor] = useState<string>("#00ff00");
-
-  // const [selectedColorType, setSelectedColorType] = useState<
-  //   "foreground" | "background"
-  // >("foreground");
-
   const [selectedFore, setSelectedFore] = useState(true);
 
   const handleColorSelect = (
@@ -86,8 +79,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     } else {
       setSelectedFore(false);
     }
-    // setSelectedColorType(colorType);
-    // console.log("🚀 ~ ColorPicker ~ colorType:", selectedColorType);
   };
 
   useEffect(() => {
@@ -95,6 +86,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     //触发了切换欸，这得重新绘画把？
     if (selectedFore) {
+      sliderRef.current?.setHue(hue);
+    } else {
+      sliderRef.current?.setHue(hue_back);
     }
   }, [selectedFore]);
 
@@ -125,7 +119,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
         setHue(psHSV.h);
         setPureRGB(hueToRGB(psHSV.h));
-        sliderRef.current?.setHue(psHSV.h);
+        // sliderRef.current?.setHue(psHSV.h);
         setSaturation(psHSV.s);
         setBrightness(psHSV.v);
         setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
@@ -149,7 +143,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
         setHue_back(psHSV.h);
         setPureRGB_back(hueToRGB(psHSV.h));
-        sliderRef.current?.setHue(psHSV.h);
+        // sliderRef.current?.setHue(psHSV.h);
         setSaturation_back(psHSV.s);
         setBrightness_back(psHSV.v);
         setCoordinate_back(
@@ -158,6 +152,14 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedFore) {
+      sliderRef.current?.setHue(hue);
+    } else {
+      sliderRef.current?.setHue(hue_back);
+    }
+  }, [hue, hue_back]);
 
   useEffect(() => {
     const mouseUpEventHandler = () => {
@@ -183,9 +185,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       const { x, y } = getRelativeCoordinates(e, containerEl.current);
       const saturation = (x / containerEl.current.offsetWidth) * 100;
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
-      const finalRGB = hsbToRgb(hue, saturation, brightness);
 
       if (selectedFore) {
+        const finalRGB = hsbToRgb(hue, saturation, brightness);
         setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
@@ -199,6 +201,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
         setFinalRGB(finalRGB);
       } else {
+        const finalRGB = hsbToRgb(hue_back, saturation, brightness);
         setCoordinate_back({ x, y });
         setSaturation_back(saturation);
         setBrightness_back(brightness);
@@ -259,8 +262,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
       const saturation = (x / containerEl.current.offsetWidth) * 100;
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
-      const finalRGB = hsbToRgb(hue, saturation, brightness);
+
       if (selectedFore) {
+        const finalRGB = hsbToRgb(hue, saturation, brightness);
         setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
@@ -272,6 +276,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setHexRGB(rgbToHex(ColRound));
         setFinalRGB(finalRGB);
       } else {
+        const finalRGB = hsbToRgb(hue_back, saturation, brightness);
         setCoordinate_back({ x, y });
         setSaturation_back(saturation);
         setBrightness_back(brightness);

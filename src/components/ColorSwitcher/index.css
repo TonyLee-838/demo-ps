@@ -11,6 +11,13 @@
   border: 1px solid #000; /* 方块边框 */
 }
 
+.color-box2 {
+  position: absolute;
+  width: 101%;
+  height: 101%;
+  border: 1px solid rgb(110, 110, 110); /* 方块边框 */
+}
+
 .background-color {
   z-index: 1; /* 确保背景色在前景色下方 */
   top: 10px;

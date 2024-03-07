@@ -25,14 +25,14 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
   return (
     <div className="color-switcher">
       <div
-        className={`color-box foreground-color ${
+        className={`color-box color-box2 foreground-color ${
           selected === "foreground" ? "selected" : ""
         }`}
         style={{ backgroundColor: foregroundColor }}
         onClick={() => selectColor("foreground")}
       ></div>
       <div
-        className={`color-box background-color ${
+        className={`color-box color-box2 background-color ${
           selected === "background" ? "selected" : ""
         }`}
         style={{ backgroundColor: backgroundColor }}
