@@ -4,6 +4,10 @@ label {
   font-size: 14px;
 }
 
+.colorSwitcher {
+  margin-right: 20px;
+}
+
 .colorPicker {
   display: flex;
   height: 96vh;
@@ -34,7 +38,7 @@ label {
 }
 
 .canvas-container {
-  margin-top: auto;
+  margin-top: 5px;
   margin-right: 0;
   display: flex;
   height: 90vh;
@@ -44,7 +48,7 @@ label {
 .colorBlockAndForm {
   margin-left: 0;
   margin-right: 10px;
-  margin-top: auto;
+  margin-top: 5px;
   height: 90vh;
 }
 

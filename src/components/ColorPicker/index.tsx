@@ -19,6 +19,7 @@ import {
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
+import ColorSwitcher from "../ColorSwitcher";
 
 const DEFAULT_RGB = createRGB(255, 255, 255);
 const DEFAULT_PureRGB = createRGB(255, 0, 0);
@@ -201,97 +202,51 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   };
 
   return (
-    <div className="colorPicker">
-      <div className="canvas-container" onMouseUp={stopDragging}>
-        <div
-          onMouseDown={startDragging}
-          ref={containerEl}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            doDrag(event);
-          }}
-          className="picker-canvas"
-          style={{
-            background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${pureRGB.r}, ${pureRGB.g},${pureRGB.b}))`,
-          }}
-        >
-          {/* 那个点啊 */}
+    <div>
+      <div className="colorPicker">
+        <div className="canvas-container" onMouseUp={stopDragging}>
+          <div className="colorSwitcher">
+            <ColorSwitcher></ColorSwitcher>
+          </div>
           <div
-            className="click-position-dot"
-            style={{
-              top: coordinate.y,
-              left: coordinate.x,
+            onMouseDown={startDragging}
+            ref={containerEl}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              doDrag(event);
             }}
-            onClick={(e) => {
-              e.preventDefault();
+            className="picker-canvas"
+            style={{
+              background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${pureRGB.r}, ${pureRGB.g},${pureRGB.b}))`,
             }}
           >
-            <div className="click-position-dot-inner">
-              {/* <div className="click-position-dot-inner2"></div> */}
+            {/* 那个点啊 */}
+            <div
+              className="click-position-dot"
+              style={{
+                top: coordinate.y,
+                left: coordinate.x,
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <div className="click-position-dot-inner">
+                {/* <div className="click-position-dot-inner2"></div> */}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* hue滑条 */}
-        <ColorSlider
-          ref={sliderRef}
-          onValueChange={(hue) => {
-            setHue(hue);
-            setPureRGB(hueToRGB(hue));
-            const tempRGB = hsbToRgb(hue, saturation, brightness);
-            setFinalRGB(tempRGB);
-
-            const ColRound = createRGB(
-              Math.round(tempRGB.r),
-              Math.round(tempRGB.g),
-              Math.round(tempRGB.b)
-            );
-            setHexRGB(rgbToHex(ColRound));
-
-            setIfPassCol(true);
-            //syncPluginRGBToPhotoShop(finalRGB);
-          }}
-        />
-      </div>
-
-      <div className="colorBlockAndForm">
-        {/* 展示颜色的方块 */}
-        <div
-          className="output"
-          style={{
-            background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
-          }}
-        ></div>
-
-        {/* 展示数值的 */}
-        <ColorForm
-          onChange={(changed, allValues) => {
-            if (!containerEl.current) {
-              return;
-            }
-            let tempRGB: RGB | null = null;
-            if (changed.red != null) {
-              tempRGB = createRGB(changed.red, allValues.green, allValues.blue);
-            } else if (changed.green != null) {
-              tempRGB = createRGB(allValues.red, changed.green, allValues.blue);
-            } else if (changed.blue != null) {
-              tempRGB = createRGB(allValues.red, allValues.green, changed.blue);
-            }
-            if (tempRGB) {
-              //表单的rgb更改 触发hsv的更改。
-              const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
-              const h = finalHSV.h;
-              const s = finalHSV.s;
-              const v = finalHSV.v;
-              setHue(h);
-              setPureRGB(hueToRGB(h));
-              sliderRef.current?.setHue(h);
-              setSaturation(s);
-              setBrightness(v);
-              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-              setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+          {/* hue滑条 */}
+          <ColorSlider
+            ref={sliderRef}
+            onValueChange={(hue) => {
+              setHue(hue);
+              setPureRGB(hueToRGB(hue));
+              const tempRGB = hsbToRgb(hue, saturation, brightness);
+              setFinalRGB(tempRGB);
 
               const ColRound = createRGB(
                 Math.round(tempRGB.r),
@@ -299,94 +254,157 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                 Math.round(tempRGB.b)
               );
               setHexRGB(rgbToHex(ColRound));
+
               setIfPassCol(true);
               //syncPluginRGBToPhotoShop(finalRGB);
-            }
-
-            let tempHSV: HSV | null = null;
-            if (changed.hue != null) {
-              tempHSV = createHSV(
-                changed.hue,
-                allValues.saturation,
-                allValues.brightness
-              );
-            } else if (changed.saturation != null) {
-              tempHSV = createHSV(
-                allValues.hue,
-                changed.saturation,
-                allValues.brightness
-              );
-            } else if (changed.brightness != null) {
-              tempHSV = createHSV(
-                allValues.hue,
-                allValues.saturation,
-                changed.brightness
-              );
-            }
-            if (tempHSV) {
-              const h = tempHSV.h;
-              const s = tempHSV.s;
-              const v = tempHSV.v;
-              setHue(h);
-              setPureRGB(hueToRGB(h));
-              sliderRef.current?.setHue(h);
-              setSaturation(s);
-              setBrightness(v);
-              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-              const tempRGB = hsbToRgb(h, s, v);
-              setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
-              const ColRound = createRGB(
-                Math.round(tempRGB.r),
-                Math.round(tempRGB.g),
-                Math.round(tempRGB.b)
-              );
-              setHexRGB(rgbToHex(ColRound));
-
-              setIfPassCol(true);
-              //  syncPluginRGBToPhotoShop(finalRGB);
-            }
-          }}
-          value={{
-            hue: Math.round(hue),
-            saturation: saturation,
-            brightness: brightness,
-            red: Math.round(finalRGB.r),
-            green: Math.round(finalRGB.g),
-            blue: Math.round(finalRGB.b),
-            // hue: Math.round(hue),
-            // saturation: saturation,
-            // brightness: brightness,
-            // red: finalRGB.r,
-            // green: finalRGB.g,
-            // blue: finalRGB.b,
-          }}
-        />
-
-        <div className="hexRGB">
-          <span>#</span>
-          <input
-            type="text"
-            onInput={(e) => {
-              const inputValue = (e.target as HTMLInputElement).value;
-              setHexRGB(inputValue);
-              const tempRGB = hexToRgb(inputValue);
-              const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
-              const h = finalHSV.h;
-              const s = finalHSV.s;
-              const v = finalHSV.v;
-              setHue(h);
-              setPureRGB(hueToRGB(h));
-              sliderRef.current?.setHue(h);
-              setSaturation(s);
-              setBrightness(v);
-              setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-              setFinalRGB(tempRGB);
-              setIfPassCol(true);
-
-              //console.log("🚀 ~ ColorPicker ~ rgb:", rgb);
             }}
-            value={hexRGB}
-          ></input>
+          />
+        </div>
+
+        <div className="colorBlockAndForm">
+          {/* 展示颜色的方块 */}
+          <div
+            className="output"
+            style={{
+              background: `rgb(${finalRGB.r},${finalRGB.g},${finalRGB.b})`,
+            }}
+          ></div>
+
+          {/* 展示数值的 */}
+          <ColorForm
+            onChange={(changed, allValues) => {
+              if (!containerEl.current) {
+                return;
+              }
+              let tempRGB: RGB | null = null;
+              if (changed.red != null) {
+                tempRGB = createRGB(
+                  changed.red,
+                  allValues.green,
+                  allValues.blue
+                );
+              } else if (changed.green != null) {
+                tempRGB = createRGB(
+                  allValues.red,
+                  changed.green,
+                  allValues.blue
+                );
+              } else if (changed.blue != null) {
+                tempRGB = createRGB(
+                  allValues.red,
+                  allValues.green,
+                  changed.blue
+                );
+              }
+              if (tempRGB) {
+                //表单的rgb更改 触发hsv的更改。
+                const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
+                const h = finalHSV.h;
+                const s = finalHSV.s;
+                const v = finalHSV.v;
+                setHue(h);
+                setPureRGB(hueToRGB(h));
+                sliderRef.current?.setHue(h);
+                setSaturation(s);
+                setBrightness(v);
+                setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+
+                const ColRound = createRGB(
+                  Math.round(tempRGB.r),
+                  Math.round(tempRGB.g),
+                  Math.round(tempRGB.b)
+                );
+                setHexRGB(rgbToHex(ColRound));
+                setIfPassCol(true);
+                //syncPluginRGBToPhotoShop(finalRGB);
+              }
+
+              let tempHSV: HSV | null = null;
+              if (changed.hue != null) {
+                tempHSV = createHSV(
+                  changed.hue,
+                  allValues.saturation,
+                  allValues.brightness
+                );
+              } else if (changed.saturation != null) {
+                tempHSV = createHSV(
+                  allValues.hue,
+                  changed.saturation,
+                  allValues.brightness
+                );
+              } else if (changed.brightness != null) {
+                tempHSV = createHSV(
+                  allValues.hue,
+                  allValues.saturation,
+                  changed.brightness
+                );
+              }
+              if (tempHSV) {
+                const h = tempHSV.h;
+                const s = tempHSV.s;
+                const v = tempHSV.v;
+                setHue(h);
+                setPureRGB(hueToRGB(h));
+                sliderRef.current?.setHue(h);
+                setSaturation(s);
+                setBrightness(v);
+                setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                const tempRGB = hsbToRgb(h, s, v);
+                setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+                const ColRound = createRGB(
+                  Math.round(tempRGB.r),
+                  Math.round(tempRGB.g),
+                  Math.round(tempRGB.b)
+                );
+                setHexRGB(rgbToHex(ColRound));
+
+                setIfPassCol(true);
+                //  syncPluginRGBToPhotoShop(finalRGB);
+              }
+            }}
+            value={{
+              hue: Math.round(hue),
+              saturation: saturation,
+              brightness: brightness,
+              red: Math.round(finalRGB.r),
+              green: Math.round(finalRGB.g),
+              blue: Math.round(finalRGB.b),
+              // hue: Math.round(hue),
+              // saturation: saturation,
+              // brightness: brightness,
+              // red: finalRGB.r,
+              // green: finalRGB.g,
+              // blue: finalRGB.b,
+            }}
+          />
+
+          <div className="hexRGB">
+            <span>#</span>
+            <input
+              type="text"
+              onInput={(e) => {
+                const inputValue = (e.target as HTMLInputElement).value;
+                setHexRGB(inputValue);
+                const tempRGB = hexToRgb(inputValue);
+                const finalHSV = rgbToHsb(tempRGB.r, tempRGB.g, tempRGB.b);
+                const h = finalHSV.h;
+                const s = finalHSV.s;
+                const v = finalHSV.v;
+                setHue(h);
+                setPureRGB(hueToRGB(h));
+                sliderRef.current?.setHue(h);
+                setSaturation(s);
+                setBrightness(v);
+                setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                setFinalRGB(tempRGB);
+                setIfPassCol(true);
+
+                //console.log("🚀 ~ ColorPicker ~ rgb:", rgb);
+              }}
+              value={hexRGB}
+            ></input>
+          </div>
         </div>
       </div>
     </div>
