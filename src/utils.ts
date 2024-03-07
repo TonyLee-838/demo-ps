@@ -206,7 +206,7 @@ export function rgbToHsb(r: number, g: number, b: number) {
   };
 }
 
-export async function RGBToPhotoShop(finalRGB: RGB) {
+export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
   const photoshop = window.require("photoshop").core;
 
   async function setColorModal() {
@@ -219,8 +219,11 @@ export async function RGBToPhotoShop(finalRGB: RGB) {
       col.rgb.red = SRGBToLinear(Number(finalRGB.r) / 255) * 255;
       col.rgb.green = SRGBToLinear(Number(finalRGB.g) / 255) * 255;
       col.rgb.blue = SRGBToLinear(Number(finalRGB.b) / 255) * 255;
-
-      app.foregroundColor = col;
+      if (isFore) {
+        app.foregroundColor = col;
+      } else {
+        app.backgroundColor = col;
+      }
     } catch (error) {
       console.log("🚀 ~ setColorModal ~ error:", error);
     }
