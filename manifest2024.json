@@ -1,13 +1,15 @@
 {
-  "manifestVersion": 4,
   "id": "ColorPicker",
-  "name": "CustomColorPicker",
+  "name": "LinearColorPicker",
   "version": "1.0.0",
   "main": "index.html",
-  "host": {
-    "app": "PS",
-    "minVersion": "23.0.0"
-  },
+  "manifestVersion": 5,
+  "host": [
+    {
+      "app": "PS",
+      "minVersion": "23.3.0"
+    }
+  ],
   "requiredPermissions": {
     "allowCodeGenerationFromStrings": true,
     "launchProcess": {
@@ -21,15 +23,16 @@
       ]
     }
   },
-  "batchPlay": {
-    "version": "1.0.0"
-  },
   "entrypoints": [
     {
       "type": "command",
-      "id": "commandFn",
+      "id": "showAbout",
       "label": {
-        "default": "Show A Dialog"
+        "default": "About React Demo"
+      },
+      "shortcut": {
+        "mac": "shift+cmd+A",
+        "win": "ctrl+alt+A"
       }
     },
     {
@@ -47,32 +50,34 @@
         "height": 2000
       },
       "preferredDockedSize": {
-        "width": 600,
+        "width": 500,
         "height": 500
       },
       "preferredFloatingSize": {
-        "width": 600,
+        "width": 500,
         "height": 500
       },
       "icons": [
         {
-          "width": 23,
-          "height": 23,
-          "path": "icons/dark.png",
+          "width": 32,
+          "height": 32,
+          "path": "icons/icon_D.png",
           "scale": [
             1,
             2
           ],
           "theme": [
-            "darkest",
             "dark",
-            "medium"
+            "darkest"
+          ],
+          "species": [
+            "generic"
           ]
         },
         {
-          "width": 23,
-          "height": 23,
-          "path": "icons/light.png",
+          "width": 32,
+          "height": 32,
+          "path": "icons/icon_N.png",
           "scale": [
             1,
             2
@@ -80,6 +85,9 @@
           "theme": [
             "lightest",
             "light"
+          ],
+          "species": [
+            "generic"
           ]
         }
       ]
@@ -87,8 +95,8 @@
   ],
   "icons": [
     {
-      "width": 23,
-      "height": 23,
+      "width": 32,
+      "height": 32,
       "path": "icons/icon_D.png",
       "scale": [
         1,
@@ -103,8 +111,8 @@
       ]
     },
     {
-      "width": 23,
-      "height": 23,
+      "width": 32,
+      "height": 32,
       "path": "icons/icon_N.png",
       "scale": [
         1,
