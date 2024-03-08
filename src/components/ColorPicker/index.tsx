@@ -82,9 +82,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   };
 
   useEffect(() => {
-    console.log("🚀 ~ ColorPicker ~ colorType:", selectedFore);
-
-    //触发了切换欸，这得重新绘画把？
     if (selectedFore) {
       sliderRef.current?.setHue(hue);
     } else {
@@ -163,7 +160,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   useEffect(() => {
     const mouseUpEventHandler = () => {
-      // console.log("鼠标抬起啦！！！");
       setDragging(false);
     };
 
@@ -300,8 +296,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         <div className="canvas-container" onMouseUp={stopDragging}>
           <div className="colorSwitcher">
             <ColorSwitcher
-              foregroundColor={"#" + hexRGB}
-              backgroundColor={"#" + hexRGB_back}
+              foregroundColor={hexRGB.includes("#") ? hexRGB : "#" + hexRGB}
+              backgroundColor={
+                hexRGB_back.includes("#") ? hexRGB_back : "#" + hexRGB_back
+              }
               onColorSelect={handleColorSelect}
             />
           </div>
@@ -425,21 +423,42 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                 const h = finalHSV.h;
                 const s = finalHSV.s;
                 const v = finalHSV.v;
-                setHue(h);
-                setPureRGB(hueToRGB(h));
-                sliderRef.current?.setHue(h);
-                setSaturation(s);
-                setBrightness(v);
-                setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-                setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+                if (selectedFore) {
+                  setHue(h);
+                  setPureRGB(hueToRGB(h));
+                  // ！！！sliderRef.current?.setHue(h);//这里可能会有问题把！！！明天再看！！
+                  setSaturation(s);
+                  setBrightness(v);
+                  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                  setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
 
-                const ColRound = createRGB(
-                  Math.round(tempRGB.r),
-                  Math.round(tempRGB.g),
-                  Math.round(tempRGB.b)
-                );
-                setHexRGB(rgbToHex(ColRound));
+                  const ColRound = createRGB(
+                    Math.round(tempRGB.r),
+                    Math.round(tempRGB.g),
+                    Math.round(tempRGB.b)
+                  );
+                  setHexRGB(rgbToHex(ColRound));
+                } else {
+                  setHue_back(h);
+                  setPureRGB_back(hueToRGB(h));
+                  // ！！！sliderRef.current?.setHue(h);//这里可能会有问题把！！！明天再看！！
+                  setSaturation_back(s);
+                  setBrightness_back(v);
+                  setCoordinate_back(
+                    calculateXYFromSV(s, v, containerEl.current)
+                  );
+                  setFinalRGB_back(tempRGB); // 这会触发上面定义的 useEffect
+
+                  const ColRound = createRGB(
+                    Math.round(tempRGB.r),
+                    Math.round(tempRGB.g),
+                    Math.round(tempRGB.b)
+                  );
+                  setHexRGB_back(rgbToHex(ColRound));
+                }
+
                 setIfPassCol(true);
+
                 //syncPluginRGBToPhotoShop(finalRGB);
               }
 
@@ -467,39 +486,63 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                 const h = tempHSV.h;
                 const s = tempHSV.s;
                 const v = tempHSV.v;
-                setHue(h);
-                setPureRGB(hueToRGB(h));
-                sliderRef.current?.setHue(h);
-                setSaturation(s);
-                setBrightness(v);
-                setCoordinate(calculateXYFromSV(s, v, containerEl.current));
-                const tempRGB = hsbToRgb(h, s, v);
-                setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
-                const ColRound = createRGB(
-                  Math.round(tempRGB.r),
-                  Math.round(tempRGB.g),
-                  Math.round(tempRGB.b)
-                );
-                setHexRGB(rgbToHex(ColRound));
+                if (selectedFore) {
+                  setHue(h);
+                  setPureRGB(hueToRGB(h));
+                  //sliderRef.current?.setHue(h);
+                  setSaturation(s);
+                  setBrightness(v);
+                  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                  const tempRGB = hsbToRgb(h, s, v);
+                  setFinalRGB(tempRGB); // 这会触发上面定义的 useEffect
+                  const ColRound = createRGB(
+                    Math.round(tempRGB.r),
+                    Math.round(tempRGB.g),
+                    Math.round(tempRGB.b)
+                  );
+                  setHexRGB(rgbToHex(ColRound));
+                } else {
+                  setHue_back(h);
+                  setPureRGB_back(hueToRGB(h));
+                  //sliderRef.current?.setHue(h);
+                  setSaturation_back(s);
+                  setBrightness_back(v);
+                  setCoordinate_back(
+                    calculateXYFromSV(s, v, containerEl.current)
+                  );
+                  const tempRGB = hsbToRgb(h, s, v);
+                  setFinalRGB_back(tempRGB); // 这会触发上面定义的 useEffect
+                  const ColRound = createRGB(
+                    Math.round(tempRGB.r),
+                    Math.round(tempRGB.g),
+                    Math.round(tempRGB.b)
+                  );
+                  setHexRGB_back(rgbToHex(ColRound));
+                }
 
                 setIfPassCol(true);
                 //  syncPluginRGBToPhotoShop(finalRGB);
               }
             }}
-            value={{
-              hue: Math.round(hue),
-              saturation: saturation,
-              brightness: brightness,
-              red: Math.round(finalRGB.r),
-              green: Math.round(finalRGB.g),
-              blue: Math.round(finalRGB.b),
-              // hue: Math.round(hue),
-              // saturation: saturation,
-              // brightness: brightness,
-              // red: finalRGB.r,
-              // green: finalRGB.g,
-              // blue: finalRGB.b,
-            }}
+            value={
+              selectedFore
+                ? {
+                    hue: Math.round(hue),
+                    saturation: saturation,
+                    brightness: brightness,
+                    red: Math.round(finalRGB.r),
+                    green: Math.round(finalRGB.g),
+                    blue: Math.round(finalRGB.b),
+                  }
+                : {
+                    hue: Math.round(hue_back),
+                    saturation: saturation_back,
+                    brightness: brightness_back,
+                    red: Math.round(finalRGB_back.r),
+                    green: Math.round(finalRGB_back.g),
+                    blue: Math.round(finalRGB_back.b),
+                  }
+            }
           />
 
           <div className="hexRGB">
