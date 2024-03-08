@@ -92,6 +92,56 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   useEffect(() => {
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
+    const gammaRed = linearToGammaSpaceExact(app.foregroundColor.rgb.red);
+    const gammaGreen = linearToGammaSpaceExact(app.foregroundColor.rgb.green);
+    const gammaBlue = linearToGammaSpaceExact(app.foregroundColor.rgb.blue);
+    const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
+    setFinalRGB(psCol);
+    const psColRound = createRGB(
+      Math.round(gammaRed),
+      Math.round(gammaGreen),
+      Math.round(gammaBlue)
+    );
+    setHexRGB(rgbToHex(psColRound));
+    const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
+    setHue(psHSV.h);
+    setPureRGB(hueToRGB(psHSV.h));
+    setSaturation(psHSV.s);
+    setBrightness(psHSV.v);
+    setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
+
+    const gammaRed_back = linearToGammaSpaceExact(app.backgroundColor.rgb.red);
+    const gammaGreen_back = linearToGammaSpaceExact(
+      app.backgroundColor.rgb.green
+    );
+    const gammaBlue_back = linearToGammaSpaceExact(
+      app.backgroundColor.rgb.blue
+    );
+    const psCol_back = createRGB(
+      gammaRed_back,
+      gammaGreen_back,
+      gammaBlue_back
+    );
+    setFinalRGB_back(psCol_back);
+    const psColRound_back = createRGB(
+      Math.round(gammaRed_back),
+      Math.round(gammaGreen_back),
+      Math.round(gammaBlue_back)
+    );
+    setHexRGB_back(rgbToHex(psColRound_back));
+    const psHSV_back = rgbToHsb(psCol_back.r, psCol_back.g, psCol_back.b);
+    setHue_back(psHSV_back.h);
+    setPureRGB_back(hueToRGB(psHSV_back.h));
+    setSaturation_back(psHSV_back.s);
+    setBrightness_back(psHSV_back.v);
+    setCoordinate_back(
+      calculateXYFromSV(psHSV_back.s, psHSV_back.v, containerEl.current)
+    );
+  }, []);
+
+  useEffect(() => {
+    const photoshop = window.require("photoshop");
+    const app = photoshop.app;
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
       //descriptor._target?.[0]?._property获取，确认是否为前景色
@@ -148,7 +198,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         );
       }
     });
-  }, []);
+  }, []); //初始化就注册一个监听ps的set操作
 
   useEffect(() => {
     if (selectedFore) {
