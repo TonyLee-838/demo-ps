@@ -92,16 +92,18 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   useEffect(() => {
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
-    const gammaRed = linearToGammaSpaceExact(app.foregroundColor.rgb.red);
-    const gammaGreen = linearToGammaSpaceExact(app.foregroundColor.rgb.green);
-    const gammaBlue = linearToGammaSpaceExact(app.foregroundColor.rgb.blue);
+
+    const psHue = app.foregroundColor.hsb.hue
+    const psSaturation = app.foregroundColor.hsb.saturation
+    const psValue = app.foregroundColor.hsb.brightness
+    const psRGB = hsbToRgb(psHue, psSaturation, psValue);
+    const gammaRed = linearToGammaSpaceExact(psRGB.r);
+    const gammaGreen = linearToGammaSpaceExact(psRGB.g);
+    const gammaBlue = linearToGammaSpaceExact(psRGB.b);
+
     const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
     setFinalRGB(psCol);
-    const psColRound = createRGB(
-      Math.round(gammaRed),
-      Math.round(gammaGreen),
-      Math.round(gammaBlue)
-    );
+    const psColRound = createRGB(Math.round(gammaRed), Math.round(gammaGreen), Math.round(gammaBlue));
     setHexRGB(rgbToHex(psColRound));
     const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
     setHue(psHSV.h);
@@ -110,18 +112,16 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     setBrightness(psHSV.v);
     setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
 
-    const gammaRed_back = linearToGammaSpaceExact(app.backgroundColor.rgb.red);
-    const gammaGreen_back = linearToGammaSpaceExact(
-      app.backgroundColor.rgb.green
-    );
-    const gammaBlue_back = linearToGammaSpaceExact(
-      app.backgroundColor.rgb.blue
-    );
-    const psCol_back = createRGB(
-      gammaRed_back,
-      gammaGreen_back,
-      gammaBlue_back
-    );
+
+    const psHue_back = app.backgroundColor.hsb.hue
+    const psSaturation_back = app.backgroundColor.hsb.saturation
+    const psValue_back = app.backgroundColor.hsb.brightness
+    const psRGB_back = hsbToRgb(psHue_back, psSaturation_back, psValue_back);
+    const gammaRed_back = linearToGammaSpaceExact(psRGB_back.r);
+    const gammaGreen_back = linearToGammaSpaceExact(psRGB_back.g);
+    const gammaBlue_back = linearToGammaSpaceExact(psRGB_back.b);
+
+    const psCol_back = createRGB(gammaRed_back, gammaGreen_back, gammaBlue_back);
     setFinalRGB_back(psCol_back);
     const psColRound_back = createRGB(
       Math.round(gammaRed_back),
@@ -144,14 +144,25 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     const app = photoshop.app;
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
+      console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
+      //console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
       //descriptor._target?.[0]?._property获取，确认是否为前景色
       const property = descriptor._target?.[0]?._property;
+
+      //23.0.3版本传过来的rgb全是undefined 我晕....
+      //console.log("🚀 ~ action.addNotificationListener ~ app.foregroundColor:", app.foregroundColor.hsb.hue)
+
       if (property == "foregroundColor") {
-        const gammaRed = linearToGammaSpaceExact(app.foregroundColor.rgb.red);
-        const gammaGreen = linearToGammaSpaceExact(
-          app.foregroundColor.rgb.green
-        );
-        const gammaBlue = linearToGammaSpaceExact(app.foregroundColor.rgb.blue);
+
+        const psHue = app.foregroundColor.hsb.hue
+        const psSaturation = app.foregroundColor.hsb.saturation
+        const psValue = app.foregroundColor.hsb.brightness
+
+        const psRGB = hsbToRgb(psHue, psSaturation, psValue);
+
+        const gammaRed = linearToGammaSpaceExact(psRGB.r);
+        const gammaGreen = linearToGammaSpaceExact(psRGB.g);
+        const gammaBlue = linearToGammaSpaceExact(psRGB.b);
         const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
 
         setFinalRGB(psCol);
@@ -171,11 +182,14 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setBrightness(psHSV.v);
         setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
       } else if (property == "backgroundColor") {
-        const gammaRed = linearToGammaSpaceExact(app.backgroundColor.rgb.red);
-        const gammaGreen = linearToGammaSpaceExact(
-          app.backgroundColor.rgb.green
-        );
-        const gammaBlue = linearToGammaSpaceExact(app.backgroundColor.rgb.blue);
+        const psHue = app.backgroundColor.hsb.hue
+        const psSaturation = app.backgroundColor.hsb.saturation
+        const psValue = app.backgroundColor.hsb.brightness
+        const psRGB = hsbToRgb(psHue, psSaturation, psValue);
+        const gammaRed = linearToGammaSpaceExact(psRGB.r);
+        const gammaGreen = linearToGammaSpaceExact(psRGB.g);
+        const gammaBlue = linearToGammaSpaceExact(psRGB.b);
+
         const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
 
         setFinalRGB_back(psCol);
@@ -286,8 +300,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       } else {
         syncPluginRGBToPhotoShop(finalRGB_back, false);
       }
+      // console.log("🚀 ~ useEffect ~ finalRGB_back:", finalRGB_back)
     }
     setIfPassCol(false);
+
   }, [ifPassCol]);
 
   const startDragging = (e: DragMouseEvent) => {
@@ -364,11 +380,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             }}
             className="picker-canvas"
             style={{
-              background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${
-                selectedFore ? pureRGB.r : pureRGB_back.r
-              }, ${selectedFore ? pureRGB.g : pureRGB_back.g},${
-                selectedFore ? pureRGB.b : pureRGB_back.b
-              }))`,
+              background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${selectedFore ? pureRGB.r : pureRGB_back.r
+                }, ${selectedFore ? pureRGB.g : pureRGB_back.g},${selectedFore ? pureRGB.b : pureRGB_back.b
+                }))`,
             }}
           >
             {/* 那个点啊 */}
@@ -377,13 +391,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               style={
                 selectedFore
                   ? {
-                      top: coordinate.y,
-                      left: coordinate.x,
-                    }
+                    top: coordinate.y,
+                    left: coordinate.x,
+                  }
                   : {
-                      top: coordinate_back.y,
-                      left: coordinate_back.x,
-                    }
+                    top: coordinate_back.y,
+                    left: coordinate_back.x,
+                  }
               }
               onClick={(e) => {
                 e.preventDefault();
@@ -435,9 +449,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           <div
             className="output"
             style={{
-              background: `rgb(${selectedFore ? finalRGB.r : finalRGB_back.r},${
-                selectedFore ? finalRGB.g : finalRGB_back.g
-              },${selectedFore ? finalRGB.b : finalRGB_back.b})`,
+              background: `rgb(${selectedFore ? finalRGB.r : finalRGB_back.r},${selectedFore ? finalRGB.g : finalRGB_back.g
+                },${selectedFore ? finalRGB.b : finalRGB_back.b})`,
             }}
           ></div>
 
@@ -577,21 +590,21 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             value={
               selectedFore
                 ? {
-                    hue: Math.round(hue),
-                    saturation: saturation,
-                    brightness: brightness,
-                    red: Math.round(finalRGB.r),
-                    green: Math.round(finalRGB.g),
-                    blue: Math.round(finalRGB.b),
-                  }
+                  hue: Math.round(hue),
+                  saturation: saturation,
+                  brightness: brightness,
+                  red: Math.round(finalRGB.r),
+                  green: Math.round(finalRGB.g),
+                  blue: Math.round(finalRGB.b),
+                }
                 : {
-                    hue: Math.round(hue_back),
-                    saturation: saturation_back,
-                    brightness: brightness_back,
-                    red: Math.round(finalRGB_back.r),
-                    green: Math.round(finalRGB_back.g),
-                    blue: Math.round(finalRGB_back.b),
-                  }
+                  hue: Math.round(hue_back),
+                  saturation: saturation_back,
+                  brightness: brightness_back,
+                  red: Math.round(finalRGB_back.r),
+                  green: Math.round(finalRGB_back.g),
+                  blue: Math.round(finalRGB_back.b),
+                }
             }
           />
 

@@ -1,92 +1,112 @@
 {
-  "id": "ColorPicker",
-  "name": "LinearColorPicker",
-  "version": "1.0.0",
-  "main": "index.html",
-  "manifestVersion": 5,
-  "host": [
-    {
-      "app": "PS",
-      "minVersion": "22.4.2"
-    }
-  ],
-  "requiredPermissions": {
-    "allowCodeGenerationFromStrings": true,
-    "launchProcess": {
-      "schemes": ["http", "https"],
-      "extensions": [".svg", ".png"]
-    }
-  },
-  "entrypoints": [
-    {
-      "type": "command",
-      "id": "showAbout",
-      "label": {
-        "default": "About React Demo"
-      },
-      "shortcut": {
-        "mac": "shift+cmd+A",
-        "win": "ctrl+alt+A"
-      }
+    "manifestVersion": 4,
+    "id": "ColorPicker",
+    "name": "CustomColorPicker",
+    "version": "1.0.0",
+    "main": "index.html",
+    "host": {
+        "app": "PS",
+        "minVersion": "23.0.0"
     },
-    {
-      "type": "panel",
-      "id": "Panel",
-      "label": {
-        "default": "LinearColorPicker"
-      },
-      "minimumSize": {
-        "width": 200,
-        "height": 200
-      },
-      "maximumSize": {
-        "width": 2000,
-        "height": 2000
-      },
-      "preferredDockedSize": {
-        "width": 500,
-        "height": 500
-      },
-      "preferredFloatingSize": {
-        "width": 500,
-        "height": 500
-      },
-      "icons": [
+    "requiredPermissions": [
+        "com.adobe.photoshop"
+    ],
+    "batchPlay": {
+        "version": "1.0.0"
+    },
+    "entrypoints": [
         {
-          "width": 32,
-          "height": 32,
-          "path": "icons/icon_D.png",
-          "scale": [1, 2],
-          "theme": ["dark", "darkest"],
-          "species": ["generic"]
+            "type": "command",
+            "id": "commandFn",
+            "label": {
+                "default": "Show A Dialog"
+            }
         },
         {
-          "width": 32,
-          "height": 32,
-          "path": "icons/icon_N.png",
-          "scale": [1, 2],
-          "theme": ["lightest", "light"],
-          "species": ["generic"]
+            "type": "panel",
+            "id": "Panel",
+            "label": {
+                "default": "LinearColorPicker"
+            },
+            "minimumSize": {
+                "width": 200,
+                "height": 200
+            },
+            "maximumSize": {
+                "width": 2000,
+                "height": 2000
+            },
+            "preferredDockedSize": {
+                "width": 600,
+                "height": 500
+            },
+            "preferredFloatingSize": {
+                "width": 600,
+                "height": 500
+            },
+            "icons": [
+                {
+                    "width": 23,
+                    "height": 23,
+                    "path": "icons/dark.png",
+                    "scale": [
+                        1,
+                        2
+                    ],
+                    "theme": [
+                        "darkest",
+                        "dark",
+                        "medium"
+                    ]
+                },
+                {
+                    "width": 23,
+                    "height": 23,
+                    "path": "icons/light.png",
+                    "scale": [
+                        1,
+                        2
+                    ],
+                    "theme": [
+                        "lightest",
+                        "light"
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "icons": [
-    {
-      "width": 32,
-      "height": 32,
-      "path": "icons/icon_D.png",
-      "scale": [1, 2],
-      "theme": ["dark", "darkest"],
-      "species": ["generic"]
-    },
-    {
-      "width": 32,
-      "height": 32,
-      "path": "icons/icon_N.png",
-      "scale": [1, 2],
-      "theme": ["lightest", "light"],
-      "species": ["generic"]
-    }
-  ]
+    ],
+    "icons": [
+        {
+            "width": 23,
+            "height": 23,
+            "path": "icons/icon_D.png",
+            "scale": [
+                1,
+                2
+            ],
+            "theme": [
+                "dark",
+                "darkest"
+            ],
+            "species": [
+                "generic"
+            ]
+        },
+        {
+            "width": 23,
+            "height": 23,
+            "path": "icons/icon_N.png",
+            "scale": [
+                1,
+                2
+            ],
+            "theme": [
+                "lightest",
+                "light"
+            ],
+            "species": [
+                "generic"
+            ]
+        }
+    ]
 }

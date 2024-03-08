@@ -206,37 +206,95 @@ export function rgbToHsb(r: number, g: number, b: number) {
   };
 }
 
-export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
-  const photoshop = window.require("photoshop").core;
 
-  async function setColorModal() {
-    try {
-      const photoshop = window.require("photoshop");
-      const app = photoshop.app;
-      const SolidColor = app.SolidColor;
-      const col = new SolidColor();
-      //转到 gamma2.2？ 反正ps偏亮， 所以这边是变暗，
-      col.rgb.red = SRGBToLinear(Number(finalRGB.r) / 255) * 255;
-      col.rgb.green = SRGBToLinear(Number(finalRGB.g) / 255) * 255;
-      col.rgb.blue = SRGBToLinear(Number(finalRGB.b) / 255) * 255;
-      if (isFore) {
-        app.foregroundColor = col;
-      } else {
-        app.backgroundColor = col;
+
+export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
+  const photoshop = window.require("photoshop");
+  const batchPlay = photoshop.action.batchPlay;
+  // 构建一个设置前景色或背景色的 batchPlay 命令
+  function setColorCommand(color, isFore) {
+    return {
+      _obj: 'set',
+      _target: [
+        {
+          _ref: "color",
+          _property: isFore ? 'foregroundColor' : 'backgroundColor'
+        },
+
+      ],
+      to: {
+        _obj: 'RGBColor',
+        red: SRGBToLinear(color.r / 255) * 255,
+        grain: SRGBToLinear(color.g / 255) * 255,
+        blue: SRGBToLinear(color.b / 255) * 255,
+      },
+      "_isCommand": true,
+      _options: {
+        dialogOptions: "dontDisplay"
       }
-    } catch (error) {
-      console.log("🚀 ~ setColorModal ~ error:", error);
-    }
+    };
   }
+
+
+  ////使用 executeAsModal 包装 batchPlay 命令
   try {
-    await photoshop.executeAsModal(setColorModal, {
-      commandName: "Set Color Command",
-    });
+    await photoshop.core.executeAsModal(async () => {
+      await batchPlay([setColorCommand(finalRGB, isFore)], {
+        "synchronousExecution": false,
+        "modalBehavior": "wait"
+      });
+    }, { commandName: "Set Color Command" });
   } catch (e) {
-    // 处理错误
+    console.error('Error setting color with batchPlay:', e);
     console.error(e);
+
   }
+
+
+  // // 调用 batchPlay 来设置颜色
+  // try {
+  //   await batchPlay(
+  //     [setColorCommand(finalRGB, isFore)], // 使用 isFore 判断设置前景色还是背景色
+  //     { synchronousExecution: true, modalBehavior: 'execute' }
+  //   );
+  // } catch (e) {
+  //   console.error('Error setting color:', e);
+  // }
 }
+
+// export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
+//   const photoshop = window.require("photoshop").core;
+
+//   async function setColorModal() {
+//     try {
+//       const photoshop = window.require("photoshop");
+//       const app = photoshop.app;
+//       const SolidColor = app.SolidColor;
+//       const col = new SolidColor();
+//       //转到 gamma2.2？ 反正ps偏亮， 所以这边是变暗，
+//       col.rgb.red = SRGBToLinear(Number(finalRGB.r) / 255) * 255;
+//       col.rgb.green = SRGBToLinear(Number(finalRGB.g) / 255) * 255;
+//       col.rgb.blue = SRGBToLinear(Number(finalRGB.b) / 255) * 255;
+//       if (isFore) {
+//         app.foregroundColor = col;
+//       } else {
+//         //app.backgroundColor = col;
+//         //console.log("🚀 ~ setColorModal ~ app.backgroundColor:", app.backgroundColor)
+//         app.backgroundColor = col;
+//       }
+//     } catch (error) {
+//       console.log("🚀 ~ setColorModal ~ error:", error);
+//     }
+//   }
+//   try {
+//     await photoshop.executeAsModal(setColorModal, {
+//       commandName: "Set Color Command",
+//     });
+//   } catch (e) {
+//     // 处理错误
+//     console.error(e);
+//   }
+// }
 
 export const syncPluginRGBToPhotoShop = throttle(RGBToPhotoShop, 100); //间隔100毫秒
 
