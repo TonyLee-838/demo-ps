@@ -356,16 +356,28 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   };
 
+  function formatHexColor(hex: string) {
+    // 移除可能存在的 '#' 字符
+    hex = hex.replace('#', '');
+
+    // 如果长度小于6，补零
+    while (hex.length < 6) {
+      hex = '0' + hex;
+    }
+
+    // 返回格式化后的十六进制颜色代码
+    return '#' + hex;
+  }
+
+
   return (
     <div>
       <div className="colorPicker">
         <div className="canvas-container" onMouseUp={stopDragging}>
           <div className="colorSwitcher">
             <ColorSwitcher
-              foregroundColor={hexRGB.includes("#") ? hexRGB : "#" + hexRGB}
-              backgroundColor={
-                hexRGB_back.includes("#") ? hexRGB_back : "#" + hexRGB_back
-              }
+              foregroundColor={formatHexColor(hexRGB)}
+              backgroundColor={formatHexColor(hexRGB_back)}
               onColorSelect={handleColorSelect}
             />
           </div>
@@ -642,6 +654,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                     calculateXYFromSV(s, v, containerEl.current)
                   );
                   setFinalRGB_back(tempRGB);
+
+
                   setIfPassCol(true);
                 }
 

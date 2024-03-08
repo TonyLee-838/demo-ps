@@ -241,7 +241,7 @@ export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
     await photoshop.core.executeAsModal(async () => {
       await batchPlay([setColorCommand(finalRGB, isFore)], {
         "synchronousExecution": false,
-        "modalBehavior": "wait"
+        "modalBehavior": "execute"
       });
     }, { commandName: "Set Color Command" });
   } catch (e) {
