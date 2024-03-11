@@ -212,7 +212,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
       if (selectedFore) {
         const finalRGB = hsbToRgb(hue, saturation, brightness);
-        setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
         const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
@@ -220,14 +219,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setFinalRGB(finalRGB);
       } else {
         const finalRGB = hsbToRgb(hue_back, saturation, brightness);
-        setCoordinate_back({ x, y });
         setSaturation_back(saturation);
         setBrightness_back(brightness);
-        const ColRound = createRGB(
-          Math.round(finalRGB.r),
-          Math.round(finalRGB.g),
-          Math.round(finalRGB.b)
-        );
+        const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
         setHexRGB_back(rgbToHex(ColRound));
         setFinalRGB_back(finalRGB);
       }
@@ -274,7 +268,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       const brightness = (1 - y / containerEl.current.offsetHeight) * 100;
       if (selectedFore) {
         const finalRGB = hsbToRgb(hue, saturation, brightness);
-        setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
         const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
@@ -282,7 +275,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setFinalRGB(finalRGB);
       } else {
         const finalRGB = hsbToRgb(hue_back, saturation, brightness);
-        setCoordinate_back({ x, y });
         setSaturation_back(saturation);
         setBrightness_back(brightness);
         const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
@@ -419,26 +411,16 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  //setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB(tempRGB);
-                  const ColRound = createRGB(
-                    Math.round(tempRGB.r),
-                    Math.round(tempRGB.g),
-                    Math.round(tempRGB.b)
-                  );
+                  const ColRound = createRGB(Math.round(tempRGB.r), Math.round(tempRGB.g), Math.round(tempRGB.b));
                   setHexRGB(rgbToHex(ColRound));
                 } else {
                   setHue_back(h);
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  // setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB_back(tempRGB);
-                  const ColRound = createRGB(
-                    Math.round(tempRGB.r),
-                    Math.round(tempRGB.g),
-                    Math.round(tempRGB.b)
-                  );
+                  const ColRound = createRGB(Math.round(tempRGB.r), Math.round(tempRGB.g), Math.round(tempRGB.b));
                   setHexRGB_back(rgbToHex(ColRound));
                 }
                 setIfPassCol(true);
@@ -473,28 +455,18 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  //  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   const tempRGB = hsbToRgb(h, s, v);
                   setFinalRGB(tempRGB);
-                  const ColRound = createRGB(
-                    Math.round(tempRGB.r),
-                    Math.round(tempRGB.g),
-                    Math.round(tempRGB.b)
-                  );
+                  const ColRound = createRGB(Math.round(tempRGB.r), Math.round(tempRGB.g), Math.round(tempRGB.b));
                   setHexRGB(rgbToHex(ColRound));
                 } else {
                   setHue_back(h);
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  // setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   const tempRGB = hsbToRgb(h, s, v);
                   setFinalRGB_back(tempRGB);
-                  const ColRound = createRGB(
-                    Math.round(tempRGB.r),
-                    Math.round(tempRGB.g),
-                    Math.round(tempRGB.b)
-                  );
+                  const ColRound = createRGB(Math.round(tempRGB.r), Math.round(tempRGB.g), Math.round(tempRGB.b));
                   setHexRGB_back(rgbToHex(ColRound));
                 }
                 setIfPassCol(true);
@@ -538,19 +510,16 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  // setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB(tempRGB);
-                  setIfPassCol(true);
                 } else {
                   setHexRGB_back(inputValue);
                   setHue_back(h);
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  //  setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB_back(tempRGB);
-                  setIfPassCol(true);
                 }
+                setIfPassCol(true);
               }}
               value={selectedFore ? hexRGB : hexRGB_back}
             ></input>
