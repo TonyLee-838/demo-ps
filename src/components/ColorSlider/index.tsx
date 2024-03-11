@@ -55,15 +55,11 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(
 
     useEffect(() => {
       const mouseUpEventHandler = () => {
-        // console.log("鼠标抬起啦！！！");
         setDragging(false);
       };
-
-      /** 在全局body上注册一个事件监听 */
       document.body.addEventListener("mouseup", mouseUpEventHandler);
 
       return () => {
-        /** 退出时要清除监听，防止内存泄漏 */
         document.body.removeEventListener("mouseup", mouseUpEventHandler);
       };
     }, []);
@@ -92,7 +88,7 @@ export default forwardRef<ColorSliderRefType, ColorSliderProps>(
     const doDrag = (e: DragMouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
-      if (dragging && containerRef.current) {
+      if (containerRef.current) {
         const sliderRect = containerRef.current.getBoundingClientRect();
         let newPosition = e.clientY - sliderRect.top; // 改为clientY和top属性
         newPosition = Math.max(newPosition, 0);

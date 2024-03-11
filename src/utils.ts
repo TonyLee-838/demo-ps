@@ -168,7 +168,6 @@ export function rgbToHsb(r: number, g: number, b: number) {
   g /= 255;
   b /= 255;
 
-  /** NOTE: 这里要额外看下对不对 */
   let h = 0;
   let s = 0;
   let v = 0;
@@ -247,54 +246,8 @@ export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
   } catch (e) {
     console.error('Error setting color with batchPlay:', e);
     console.error(e);
-
   }
-
-
-  // // 调用 batchPlay 来设置颜色
-  // try {
-  //   await batchPlay(
-  //     [setColorCommand(finalRGB, isFore)], // 使用 isFore 判断设置前景色还是背景色
-  //     { synchronousExecution: true, modalBehavior: 'execute' }
-  //   );
-  // } catch (e) {
-  //   console.error('Error setting color:', e);
-  // }
 }
-
-// export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
-//   const photoshop = window.require("photoshop").core;
-
-//   async function setColorModal() {
-//     try {
-//       const photoshop = window.require("photoshop");
-//       const app = photoshop.app;
-//       const SolidColor = app.SolidColor;
-//       const col = new SolidColor();
-//       //转到 gamma2.2？ 反正ps偏亮， 所以这边是变暗，
-//       col.rgb.red = SRGBToLinear(Number(finalRGB.r) / 255) * 255;
-//       col.rgb.green = SRGBToLinear(Number(finalRGB.g) / 255) * 255;
-//       col.rgb.blue = SRGBToLinear(Number(finalRGB.b) / 255) * 255;
-//       if (isFore) {
-//         app.foregroundColor = col;
-//       } else {
-//         //app.backgroundColor = col;
-//         //console.log("🚀 ~ setColorModal ~ app.backgroundColor:", app.backgroundColor)
-//         app.backgroundColor = col;
-//       }
-//     } catch (error) {
-//       console.log("🚀 ~ setColorModal ~ error:", error);
-//     }
-//   }
-//   try {
-//     await photoshop.executeAsModal(setColorModal, {
-//       commandName: "Set Color Command",
-//     });
-//   } catch (e) {
-//     // 处理错误
-//     console.error(e);
-//   }
-// }
 
 export const syncPluginRGBToPhotoShop = throttle(RGBToPhotoShop, 100); //间隔100毫秒
 
@@ -316,20 +269,15 @@ export function hexToRgb(hex: string): RGB {
 }
 
 export function rgbToHex(rgb: RGB): string {
-  // 将一个颜色通道的数值转换为十六进制的字符串
   const toHex = (colorValue: number): string => {
-    // 将十进制颜色值转换为十六进制
     const hex = colorValue.toString(16);
     // 十六进制是两位数，不足两位数前面补0
     return hex.padStart(2, "0");
   };
-
-  // 使用解构赋值从对象中获取r, g, b值
   const { r, g, b } = rgb;
-
-  // 返回完整的十六进制颜色代码
   return toHex(r) + toHex(g) + toHex(b);
 }
+
 export function calculateXYFromSV(
   saturation: number,
   brightness: number,
@@ -338,4 +286,14 @@ export function calculateXYFromSV(
   const x = (saturation / 100) * element.offsetWidth;
   const y = (1 - brightness / 100) * element.offsetHeight;
   return { x, y };
+}
+
+export function formatHexColor(hex: string) {
+  // 移除可能存在的 '#' 字符
+  hex = hex.replace('#', '');
+  // 如果长度小于6，补零
+  while (hex.length < 6) {
+    hex = '0' + hex;
+  }
+  return '#' + hex;
 }
