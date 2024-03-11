@@ -26,13 +26,6 @@
   },
   "entrypoints": [
     {
-      "type": "command",
-      "id": "commandFn",
-      "label": {
-        "default": "Show A Dialog"
-      }
-    },
-    {
       "type": "panel",
       "id": "Panel",
       "label": {
@@ -58,7 +51,7 @@
         {
           "width": 23,
           "height": 23,
-          "path": "icons/dark.png",
+          "path": "icons/LinearColorPickerIcon.png",
           "scale": [
             1,
             2
@@ -72,7 +65,7 @@
         {
           "width": 23,
           "height": 23,
-          "path": "icons/light.png",
+          "path": "icons/LinearColorPickerIcon.png",
           "scale": [
             1,
             2
@@ -89,7 +82,7 @@
     {
       "width": 23,
       "height": 23,
-      "path": "icons/icon_D.png",
+      "path": "icons/LinearColorPickerIcon48.png",
       "scale": [
         1,
         2
@@ -105,7 +98,7 @@
     {
       "width": 23,
       "height": 23,
-      "path": "icons/icon_N.png",
+      "path": "icons/LinearColorPickerIcon48.png",
       "scale": [
         1,
         2

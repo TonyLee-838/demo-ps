@@ -24,7 +24,7 @@ const DEFAULT_RGB = createRGB(255, 255, 255);
 const DEFAULT_PureRGB = createRGB(255, 0, 0);
 
 type DragMouseEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent;
-function getRelativeCoordinates(
+function getRelativeCoordinates(   //当前位置
   event: DragMouseEvent,
   element: HTMLDivElement
 ) {
@@ -35,8 +35,8 @@ function getRelativeCoordinates(
       y: 0,
     };
   }
-  let x = event.clientX - bounds.left;
-  let y = event.clientY - bounds.top;
+  let x = (event.clientX - bounds.left);
+  let y = (event.clientY - bounds.top);
   x = Math.max(x, 0);
   x = Math.min(x, bounds.width);
   y = Math.max(y, 0);
@@ -188,9 +188,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setPureRGB_back(hueToRGB(psHSV.h));
         setSaturation_back(psHSV.s);
         setBrightness_back(psHSV.v);
-        setCoordinate_back(
-          calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current)
-        );
+        setCoordinate_back(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
       }
     });
   }, []); //初始化就注册一个监听ps的set操作
