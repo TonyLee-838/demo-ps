@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { throttle } from "lodash-es";
 import "./index.css";
 import {
   Coordinate,
@@ -79,13 +80,40 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   };
 
+  const [renderKey, setRenderKey] = useState(0);
+  //const [, forceRender] = useState({});
+  useEffect(() => {//监听resize
+    const handleResize = throttle(() => {
+      setRenderKey(k => k + 1)
+
+      // setCoordinate(calculateXYFromSV(saturation, brightness, containerEl.current));
+      // setCoordinate_back(calculateXYFromSV(saturation_back, brightness_back, containerEl.current));
+      //console.log("🚀 ~ handleResize ~ containerEl.current:", containerEl.current)
+
+      // forceRender({})
+      //sliderRef.current?.setHue(hue + 1);
+      //sliderRef.current?.setHue(hue - 1);
+    }, 100);
+
+
+    // 添加resize事件监听器
+    document.addEventListener('resize', handleResize);
+
+    // 组件卸载时清除监听器
+    return () => {
+      document.removeEventListener('resize', handleResize);
+    };
+
+  }, [])
+
+
   useEffect(() => {
     if (selectedFore) {
       sliderRef.current?.setHue(hue);
     } else {
       sliderRef.current?.setHue(hue_back);
     }
-  }, [selectedFore]);
+  }, [selectedFore, renderKey]);
 
   useEffect(() => {
     const photoshop = window.require("photoshop");
@@ -133,7 +161,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       setCoordinate(calculateXYFromSV(saturation, brightness, containerEl.current));
       setCoordinate_back(calculateXYFromSV(saturation_back, brightness_back, containerEl.current));
     }
-  }, [saturation, brightness, saturation_back, brightness_back, containerEl]);
+  }, [saturation, brightness, saturation_back, brightness_back, containerEl, renderKey]);
 
 
   useEffect(() => {
@@ -288,6 +316,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
   return (
     <div>
+
       <div className="colorPicker">
         <div className="canvas-container" onMouseUp={stopDragging}>
           <div className="colorSwitcher">
@@ -374,6 +403,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                 },${selectedFore ? finalRGB.b : finalRGB_back.b})`,
             }}
           ></div>
+
+          <span key={renderKey}></span>
 
           {/* 展示数值的 */}
           <ColorForm
