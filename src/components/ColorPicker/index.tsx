@@ -108,8 +108,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     setPureRGB(hueToRGB(psHSV.h));
     setSaturation(psHSV.s);
     setBrightness(psHSV.v);
-    setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
-
     const psHue_back = app.backgroundColor.hsb.hue
     const psSaturation_back = app.backgroundColor.hsb.saturation
     const psValue_back = app.backgroundColor.hsb.brightness
@@ -120,32 +118,32 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     const psCol_back = createRGB(gammaRed_back, gammaGreen_back, gammaBlue_back);
     setFinalRGB_back(psCol_back);
-    const psColRound_back = createRGB(
-      Math.round(gammaRed_back),
-      Math.round(gammaGreen_back),
-      Math.round(gammaBlue_back)
-    );
+    const psColRound_back = createRGB(Math.round(gammaRed_back), Math.round(gammaGreen_back), Math.round(gammaBlue_back));
     setHexRGB_back(rgbToHex(psColRound_back));
     const psHSV_back = rgbToHsb(psCol_back.r, psCol_back.g, psCol_back.b);
     setHue_back(psHSV_back.h);
     setPureRGB_back(hueToRGB(psHSV_back.h));
     setSaturation_back(psHSV_back.s);
     setBrightness_back(psHSV_back.v);
-    setCoordinate_back(calculateXYFromSV(psHSV_back.s, psHSV_back.v, containerEl.current));
+
   }, []);
+
+  useEffect(() => {
+    if (containerEl.current) {
+      setCoordinate(calculateXYFromSV(saturation, brightness, containerEl.current));
+      setCoordinate_back(calculateXYFromSV(saturation_back, brightness_back, containerEl.current));
+    }
+  }, [saturation, brightness, saturation_back, brightness_back, containerEl]);
+
 
   useEffect(() => {
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
-      //console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
       //descriptor._target?.[0]?._property获取，确认是否为前景色
       const property = descriptor._target?.[0]?._property;
-
-      //23.0.3版本传过来的rgb全是undefined 我晕....
-      //console.log("🚀 ~ action.addNotificationListener ~ app.foregroundColor:", app.foregroundColor.hsb.hue)
-
+      //23.0.3版本传过来的rgb全是undefined 我晕....用hsv转rgb得了
       if (property == "foregroundColor") {
         const psHue = app.foregroundColor.hsb.hue
         const psSaturation = app.foregroundColor.hsb.saturation
@@ -163,7 +161,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setPureRGB(hueToRGB(psHSV.h));
         setSaturation(psHSV.s);
         setBrightness(psHSV.v);
-        setCoordinate(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
       } else if (property == "backgroundColor") {
         const psHue = app.backgroundColor.hsb.hue
         const psSaturation = app.backgroundColor.hsb.saturation
@@ -172,23 +169,15 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         const gammaRed = linearToGammaSpaceExact(psRGB.r);
         const gammaGreen = linearToGammaSpaceExact(psRGB.g);
         const gammaBlue = linearToGammaSpaceExact(psRGB.b);
-
         const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
-
         setFinalRGB_back(psCol);
-
-        const psColRound = createRGB(
-          Math.round(gammaRed),
-          Math.round(gammaGreen),
-          Math.round(gammaBlue)
-        );
+        const psColRound = createRGB(Math.round(gammaRed), Math.round(gammaGreen), Math.round(gammaBlue));
         setHexRGB_back(rgbToHex(psColRound));
         const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
         setHue_back(psHSV.h);
         setPureRGB_back(hueToRGB(psHSV.h));
         setSaturation_back(psHSV.s);
         setBrightness_back(psHSV.v);
-        setCoordinate_back(calculateXYFromSV(psHSV.s, psHSV.v, containerEl.current));
       }
     });
   }, []); //初始化就注册一个监听ps的set操作
@@ -226,11 +215,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
-        const ColRound = createRGB(
-          Math.round(finalRGB.r),
-          Math.round(finalRGB.g),
-          Math.round(finalRGB.b)
-        );
+        const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
         setHexRGB(rgbToHex(ColRound));
         setFinalRGB(finalRGB);
       } else {
@@ -292,11 +277,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setCoordinate({ x, y });
         setSaturation(saturation);
         setBrightness(brightness);
-        const ColRound = createRGB(
-          Math.round(finalRGB.r),
-          Math.round(finalRGB.g),
-          Math.round(finalRGB.b)
-        );
+        const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
         setHexRGB(rgbToHex(ColRound));
         setFinalRGB(finalRGB);
       } else {
@@ -304,11 +285,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
         setCoordinate_back({ x, y });
         setSaturation_back(saturation);
         setBrightness_back(brightness);
-        const ColRound = createRGB(
-          Math.round(finalRGB.r),
-          Math.round(finalRGB.g),
-          Math.round(finalRGB.b)
-        );
+        const ColRound = createRGB(Math.round(finalRGB.r), Math.round(finalRGB.g), Math.round(finalRGB.b));
         setHexRGB_back(rgbToHex(ColRound));
         setFinalRGB_back(finalRGB);
       }
@@ -442,7 +419,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                  //setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB(tempRGB);
                   const ColRound = createRGB(
                     Math.round(tempRGB.r),
@@ -455,7 +432,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
+                  // setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB_back(tempRGB);
                   const ColRound = createRGB(
                     Math.round(tempRGB.r),
@@ -496,7 +473,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                  //  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   const tempRGB = hsbToRgb(h, s, v);
                   setFinalRGB(tempRGB);
                   const ColRound = createRGB(
@@ -510,7 +487,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
+                  // setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   const tempRGB = hsbToRgb(h, s, v);
                   setFinalRGB_back(tempRGB);
                   const ColRound = createRGB(
@@ -561,7 +538,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB(hueToRGB(h));
                   setSaturation(s);
                   setBrightness(v);
-                  setCoordinate(calculateXYFromSV(s, v, containerEl.current));
+                  // setCoordinate(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB(tempRGB);
                   setIfPassCol(true);
                 } else {
@@ -570,7 +547,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                   setPureRGB_back(hueToRGB(h));
                   setSaturation_back(s);
                   setBrightness_back(v);
-                  setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
+                  //  setCoordinate_back(calculateXYFromSV(s, v, containerEl.current));
                   setFinalRGB_back(tempRGB);
                   setIfPassCol(true);
                 }
