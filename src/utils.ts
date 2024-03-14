@@ -207,33 +207,74 @@ export function rgbToHsb(r: number, g: number, b: number) {
 
 
 
+
 export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
   const photoshop = window.require("photoshop");
   const batchPlay = photoshop.action.batchPlay;
   // 构建一个设置前景色或背景色的 batchPlay 命令
   function setColorCommand(color, isFore) {
+
+
+
+    const linearHSB = rgbToHsb(SRGBToLinear(color.r / 255) * 255, SRGBToLinear(color.g / 255) * 255, SRGBToLinear(color.b / 255) * 255);
+
+
+    // return {
+    //   _obj: 'set',
+    //   _target: [
+    //     {
+    //       _ref: "color",
+    //       _property: isFore ? 'foregroundColor' : 'backgroundColor'
+    //     },
+
+    //   ],
+    //   to: {
+    //     _obj: 'RGBColor',
+    //     red: SRGBToLinear(color.r / 255) * 255,
+    //     grain: SRGBToLinear(color.g / 255) * 255,
+    //     blue: SRGBToLinear(color.b / 255) * 255,
+    //   },
+    //   "_isCommand": true,
+    //   _options: {
+    //     dialogOptions: "dontDisplay"
+    //   }
+    // };
+
     return {
-      _obj: 'set',
+      _obj: "set",
       _target: [
         {
           _ref: "color",
           _property: isFore ? 'foregroundColor' : 'backgroundColor'
-        },
-
+        }
       ],
       to: {
-        _obj: 'RGBColor',
-        red: SRGBToLinear(color.r / 255) * 255,
-        grain: SRGBToLinear(color.g / 255) * 255,
-        blue: SRGBToLinear(color.b / 255) * 255,
+        _obj: "HSBColorClass",
+        hue: {
+          _unit: "angleUnit",
+          _value: linearHSB.h
+        },
+        saturation: linearHSB.s,
+        brightness: linearHSB.v
       },
-      "_isCommand": true,
+      source: "colorPickerPanel",
       _options: {
         dialogOptions: "dontDisplay"
       }
     };
   }
 
+  // const openPicker = {
+  //   _target: { _ref: "application" },
+  //   _obj: "showColorPicker",
+  //   context: "Some title for the color picker...",
+  //   color: {
+  //     _obj: 'RGBColor',
+  //     red: 0,
+  //     green: 0,
+  //     blue: 0,
+  //   },
+  // };
 
   ////使用 executeAsModal 包装 batchPlay 命令
   try {
@@ -242,6 +283,8 @@ export async function RGBToPhotoShop(finalRGB: RGB, isFore: boolean) {
         "synchronousExecution": false,
         "modalBehavior": "execute"
       });
+      //const res = await photoshop.action.batchPlay([openPicker], {})
+
     }, { commandName: "Set Color Command" });
   } catch (e) {
     console.error('Error setting color with batchPlay:', e);

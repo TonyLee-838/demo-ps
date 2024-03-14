@@ -25,10 +25,7 @@ const DEFAULT_RGB = createRGB(255, 255, 255);
 const DEFAULT_PureRGB = createRGB(255, 0, 0);
 
 type DragMouseEvent = React.MouseEvent<HTMLDivElement, MouseEvent> | MouseEvent;
-function getRelativeCoordinates(   //当前位置
-  event: DragMouseEvent,
-  element: HTMLDivElement
-) {
+function getRelativeCoordinates(event: DragMouseEvent, element: HTMLDivElement) {
   const bounds = element?.getBoundingClientRect();
   if (!bounds) {
     return {
@@ -85,14 +82,11 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   useEffect(() => {//监听resize
     const handleResize = throttle(() => {
       setRenderKey(k => k + 1)
-
+      console.log(renderKey)
       // setCoordinate(calculateXYFromSV(saturation, brightness, containerEl.current));
       // setCoordinate_back(calculateXYFromSV(saturation_back, brightness_back, containerEl.current));
       //console.log("🚀 ~ handleResize ~ containerEl.current:", containerEl.current)
 
-      // forceRender({})
-      //sliderRef.current?.setHue(hue + 1);
-      //sliderRef.current?.setHue(hue - 1);
     }, 100);
 
 
@@ -164,9 +158,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
   }, [saturation, brightness, saturation_back, brightness_back, containerEl, renderKey]);
 
 
+
+
   useEffect(() => {
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
+
+
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
       //descriptor._target?.[0]?._property获取，确认是否为前景色
@@ -341,6 +339,10 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
                 }))`,
             }}
           >
+            <div>
+
+            </div>
+
             {/* 那个点啊 */}
             <div
               className="click-position-dot"
