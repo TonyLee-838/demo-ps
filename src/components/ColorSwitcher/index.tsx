@@ -41,7 +41,7 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
         onClick={() => {
           if (selected == "foreground") {
             ShowColorPicker(hexToRgb(foregroundColor), true).then(forPass => {
-              console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
+              // console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
               onUpdatePanelColor(forPass, true);
 
             });
@@ -58,7 +58,7 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
         onClick={() => {
           if (selected == "background") {
             ShowColorPicker(hexToRgb(backgroundColor), false).then(forPass => {
-              console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
+              //console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
               onUpdatePanelColor(forPass, false);
             });
           } else {

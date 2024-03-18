@@ -28,11 +28,11 @@
 .colorBlockAndForm {
   /* or 'absolute' if you want it to be relative to a positioned parent */
   right: 0px;
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: 1px;
+  margin-right: 1px;
   margin-top: 4px;
   height: 90vh;
-  width: 66px;
+  width: 70px;
   flex-shrink: 0;
 }
 
@@ -51,6 +51,7 @@
 }
 
 .hexRGB input {
+  padding: 0 2px;
   display: block;
   width: 50px;
   margin-left: 1px;

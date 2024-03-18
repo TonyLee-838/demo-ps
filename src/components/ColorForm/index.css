@@ -1,21 +1,26 @@
 .input {
   width: 40px;
-  margin: 1px;
+  margin: 0px;
   height: 20px;
+  border-radius: 0;
+  padding: 0 2px
+    /* 取消圆角 */
+
 }
 
 .item {
   display: flex;
   margin-bottom: 5px;
   align-items: center;
-  flex: 1;
+
 }
 
 .label {
+  width: 15px;
   font-size: 13px;
 }
 
 .form {
-  margin-left: 5px;
+
   margin-right: 1px;
 }

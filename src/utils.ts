@@ -533,6 +533,7 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
     );
 
     var colorPicked = result[0].color;
+    console.log("🚀 ~ ShowColorPicker ~ result:", result)
     // console.log("🚀 ~ ShowColorPicker ~ colorPicked:", colorPicked)
     const forPassHSV = createHSV(colorPicked.hue._value, colorPicked.saturation, colorPicked.brightness);
     HSBToPhotoShop(forPassHSV, isFore);
