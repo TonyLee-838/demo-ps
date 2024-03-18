@@ -85,13 +85,15 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   };
 
+  const [updateKey, setUpdateKey] = useState(0);
+
   const [renderKey, setRenderKey] = useState(0);
   //const [, forceRender] = useState({});
-  useEffect(() => {
+  useEffect(() => {//resize
     //监听resize
     const handleResize = throttle(() => {
       setRenderKey((k) => k + 1);
-      console.log(renderKey);
+      // console.log(renderKey);
       // setCoordinate(calculateXYFromSV(saturation, brightness, containerEl.current));
       // setCoordinate_back(calculateXYFromSV(saturation_back, brightness_back, containerEl.current));
       //console.log("🚀 ~ handleResize ~ containerEl.current:", containerEl.current)
@@ -106,7 +108,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {//切换前后
     if (selectedFore) {
       sliderRef.current?.setHue(hue);
     } else {
@@ -114,7 +116,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   }, [selectedFore, renderKey]);
 
-  useEffect(() => {
+  useEffect(() => {//初始化获取
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
 
@@ -127,6 +129,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     const gammaBlue = linearToGammaSpaceExact(psRGB.b);
 
     const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
+    console.log("🚀 ~ useEffect ~ psCol:", psCol)
     setFinalRGB(psCol);
     const psColRound = createRGB(
       Math.round(gammaRed),
@@ -139,6 +142,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     setPureRGB(hueToRGB(psHSV.h));
     setSaturation(psHSV.s);
     setBrightness(psHSV.v);
+
+
+
     const psHue_back = app.backgroundColor.hsb.hue;
     const psSaturation_back = app.backgroundColor.hsb.saturation;
     const psValue_back = app.backgroundColor.hsb.brightness;
@@ -152,6 +158,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       gammaGreen_back,
       gammaBlue_back
     );
+    console.log("🚀 ~ useEffect ~ psCol_back:", psCol_back)
     setFinalRGB_back(psCol_back);
     const psColRound_back = createRGB(
       Math.round(gammaRed_back),
@@ -363,19 +370,56 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
 
   const handleUpdatePanelColor = (
+    color: RGB,
     isFore: boolean
   ) => {
     console.log("🚀 ~ ColorPicker ~ isFore:", isFore)
+    console.log("🚀 ~ ColorPicker ~ color:", color)
+
     if (isFore) {
+      const psCol = createRGB(color.r, color.g, color.b);
+      setFinalRGB(psCol);
+      const psColRound = createRGB(
+        Math.round(color.r),
+        Math.round(color.g),
+        Math.round(color.b)
+      );
+      setHexRGB(rgbToHex(psColRound));
+      const psHSV = rgbToHsb(psCol.r, psCol.g, psCol.b);
+      setHue(psHSV.h);
+      setPureRGB(hueToRGB(psHSV.h));
+      setSaturation(psHSV.s);
+      setBrightness(psHSV.v);
 
     } else {
-
+      const psCol_back = createRGB(
+        color.r,
+        color.g,
+        color.b
+      );
+      setFinalRGB_back(psCol_back);
+      const psColRound_back = createRGB(
+        Math.round(color.r),
+        Math.round(color.g),
+        Math.round(color.b)
+      );
+      setHexRGB_back(rgbToHex(psColRound_back));
+      const psHSV_back = rgbToHsb(psCol_back.r, psCol_back.g, psCol_back.b);
+      setHue_back(psHSV_back.h);
+      setPureRGB_back(hueToRGB(psHSV_back.h));
+      setSaturation_back(psHSV_back.s);
+      setBrightness_back(psHSV_back.v);
 
     }
 
+    //setUpdateKey(updateKey);
 
 
   };
+
+
+
+
 
 
 

@@ -6,12 +6,13 @@ import {
   hexToRgb,
   rgbToHex,
 } from "../../utils";
+import { random } from "lodash-es";
 
 type ColorSwitcherProps = {
   foregroundColor: string;
   backgroundColor: string;
   onColorSelect: (color: "foreground" | "background") => void;
-  onUpdatePanelColor: boolean;
+  onUpdatePanelColor: number;
 };
 
 const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
@@ -23,6 +24,7 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
   const [selected, setSelected] = useState<"foreground" | "background">(
     "foreground"
   );
+  //const [updateKey, setUpdateKey] = useState(0);
 
   // 选中前景色或背景色
   const selectColor = (color: "foreground" | "background") => {
@@ -38,8 +40,10 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
         style={{ backgroundColor: foregroundColor }}
         onClick={() => {
           if (selected == "foreground") {
-            ShowColorPicker(hexToRgb(foregroundColor), true).then(() => {
-              onUpdatePanelColor(true);
+            ShowColorPicker(hexToRgb(foregroundColor), true).then(forPass => {
+              console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
+              onUpdatePanelColor(forPass, true);
+
             });
 
           } else {
@@ -53,8 +57,9 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
         style={{ backgroundColor: backgroundColor }}
         onClick={() => {
           if (selected == "background") {
-            ShowColorPicker(hexToRgb(backgroundColor), false).then(() => {
-              onUpdatePanelColor(false);
+            ShowColorPicker(hexToRgb(backgroundColor), false).then(forPass => {
+              console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
+              onUpdatePanelColor(forPass, false);
             });
           } else {
             selectColor("background")

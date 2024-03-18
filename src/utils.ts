@@ -504,11 +504,10 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
     SRGBToLinear(finalRGB.g / 255) * 255,
     SRGBToLinear(finalRGB.b / 255) * 255
   );
-
   try {
-    await photoshop.core.executeAsModal(
+    const result = await photoshop.core.executeAsModal(
       async () => {
-        var colorPicked = await batchPlay([{
+        return await batchPlay([{
           "_obj": "showColorPicker",
           "application": {
             "_class": "null"
@@ -528,19 +527,26 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
         }
         ], {
           synchronousExecution: true
-        })[0].color;
-
-
-        // console.log("You picked:", colorPicked);
-        // console.log("You pickedCOL:", colorPicked.hue._value);
-        // console.log("You pickedCOL:", colorPicked.saturation);
-        // console.log("You pickedCOL:", colorPicked.brightness);
-        var forPass = createHSV(colorPicked.hue._value, colorPicked.saturation, colorPicked.brightness);
-        HSBToPhotoShop(forPass, isFore);
-
+        });
       },
       { commandName: "Set Color Command" }
     );
+
+    var colorPicked = result[0].color;
+    // console.log("🚀 ~ ShowColorPicker ~ colorPicked:", colorPicked)
+    const forPassHSV = createHSV(colorPicked.hue._value, colorPicked.saturation, colorPicked.brightness);
+    HSBToPhotoShop(forPassHSV, isFore);
+    const forPass = hsbToRgb(forPassHSV.h, forPassHSV.s, forPassHSV.v);
+    // console.log("🚀 ~ ShowColorPicker ~ forPass:", forPass)
+
+    // console.log("🚀 ~ ShowColorPicker ~ forPass2:", linearToGammaSpaceExact(forPass.r))
+    // console.log("🚀 ~ ShowColorPicker ~ forPass2:", linearToGammaSpaceExact(forPass.g))
+    // console.log("🚀 ~ ShowColorPicker ~ forPass2:", linearToGammaSpaceExact(forPass.b))
+    forPass.r = linearToGammaSpaceExact(forPass.r);
+    forPass.g = linearToGammaSpaceExact(forPass.g);
+    forPass.b = linearToGammaSpaceExact(forPass.b);
+    //const forPass = forPassHSV;
+    return forPass;
 
   } catch (e) {
     console.error("Error setting color with batchPlay:", e);
