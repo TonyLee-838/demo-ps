@@ -5,25 +5,23 @@
 .colorPicker {
   display: flex;
   height: 96vh;
-  width: 96vw;
-
+  width: 100vw;
 }
 
 .picker-canvas {
   position: relative;
   border: -0.1px solid #252525;
   outline: 0.1px solid #8c8c8c;
-  width: 90vw;
+  flex: 1;
   height: 90vh;
   margin-right: 8px;
 }
-
 
 .canvas-container {
   margin-top: 4px;
   display: flex;
   height: 90vh;
-  width: 90vw;
+  flex: 1
 }
 
 .colorBlockAndForm {
