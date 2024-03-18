@@ -17,6 +17,7 @@ import {
   calculateXYFromSV,
   formatHexColor,
   RGBToContentLayer,
+  RGBToStrokeStyle
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
@@ -366,7 +367,29 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               backgroundColor={formatHexColor(hexRGB_back)}
               onColorSelect={handleColorSelect}
             />
+
+            {/*             
+            <button
+              onClick={() => {
+                RGBToContentLayer(selectedFore ? finalRGB : finalRGB_back);
+              }}
+            >
+              {" "}
+              填充
+            </button>
+
+            <button
+              onClick={() => {
+                RGBToStrokeStyle(selectedFore ? finalRGB : finalRGB_back);
+              }}
+            >
+              {" "}
+              描边
+            </button> */}
+
           </div>
+
+
           <div
             onMouseDown={startDragging}
             ref={containerEl}
@@ -377,11 +400,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             }}
             className="picker-canvas"
             style={{
-              background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${
-                selectedFore ? pureRGB.r : pureRGB_back.r
-              }, ${selectedFore ? pureRGB.g : pureRGB_back.g},${
-                selectedFore ? pureRGB.b : pureRGB_back.b
-              }))`,
+              background: `linear-gradient(to bottom, transparent, #000),linear-gradient(to right, #fff, rgb(${selectedFore ? pureRGB.r : pureRGB_back.r
+                }, ${selectedFore ? pureRGB.g : pureRGB_back.g},${selectedFore ? pureRGB.b : pureRGB_back.b
+                }))`,
             }}
           >
             <div></div>
@@ -392,13 +413,13 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               style={
                 selectedFore
                   ? {
-                      top: coordinate.y,
-                      left: coordinate.x,
-                    }
+                    top: coordinate.y,
+                    left: coordinate.x,
+                  }
                   : {
-                      top: coordinate_back.y,
-                      left: coordinate_back.x,
-                    }
+                    top: coordinate_back.y,
+                    left: coordinate_back.x,
+                  }
               }
               onClick={(e) => {
                 e.preventDefault();
@@ -445,9 +466,8 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
           <div
             className="output"
             style={{
-              background: `rgb(${selectedFore ? finalRGB.r : finalRGB_back.r},${
-                selectedFore ? finalRGB.g : finalRGB_back.g
-              },${selectedFore ? finalRGB.b : finalRGB_back.b})`,
+              background: `rgb(${selectedFore ? finalRGB.r : finalRGB_back.r},${selectedFore ? finalRGB.g : finalRGB_back.g
+                },${selectedFore ? finalRGB.b : finalRGB_back.b})`,
             }}
           ></div>
 
@@ -569,21 +589,21 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
             value={
               selectedFore
                 ? {
-                    hue: Math.round(hue),
-                    saturation: saturation,
-                    brightness: brightness,
-                    red: Math.round(finalRGB.r),
-                    green: Math.round(finalRGB.g),
-                    blue: Math.round(finalRGB.b),
-                  }
+                  hue: Math.round(hue),
+                  saturation: saturation,
+                  brightness: brightness,
+                  red: Math.round(finalRGB.r),
+                  green: Math.round(finalRGB.g),
+                  blue: Math.round(finalRGB.b),
+                }
                 : {
-                    hue: Math.round(hue_back),
-                    saturation: saturation_back,
-                    brightness: brightness_back,
-                    red: Math.round(finalRGB_back.r),
-                    green: Math.round(finalRGB_back.g),
-                    blue: Math.round(finalRGB_back.b),
-                  }
+                  hue: Math.round(hue_back),
+                  saturation: saturation_back,
+                  brightness: brightness_back,
+                  red: Math.round(finalRGB_back.r),
+                  green: Math.round(finalRGB_back.g),
+                  blue: Math.round(finalRGB_back.b),
+                }
             }
           />
 
@@ -618,14 +638,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               value={selectedFore ? hexRGB : hexRGB_back}
             ></input>
           </div>
-          <button
-            onClick={() => {
-              RGBToContentLayer(selectedFore ? finalRGB : finalRGB_back);
-            }}
-          >
-            {" "}
-            填充颜色
-          </button>
+
         </div>
       </div>
     </div>

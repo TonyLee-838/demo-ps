@@ -382,3 +382,55 @@ export async function RGBToContentLayer(finalRGB: RGB) {
     console.error(e);
   }
 }
+
+
+export async function RGBToStrokeStyle(finalRGB: RGB) {
+  const photoshop = window.require("photoshop");
+  const batchPlay = photoshop.action.batchPlay;
+  function setColorCommand(color) {
+    return {
+      _obj: "set",
+      _target: [
+        {
+          _enum: "ordinal",
+          _ref: "contentLayer",
+          _value: "targetEnum",
+        },
+      ],
+      to: {
+        _obj: "shapeStyle",
+        strokeStyle: {
+          _obj: "strokeStyle",
+          strokeStyleContent: {
+            _obj: "solidColorLayer",
+            color: {
+              _obj: "RGBColor",
+              red: SRGBToLinear(color.r / 255) * 255,
+              grain: SRGBToLinear(color.g / 255) * 255,
+              blue: SRGBToLinear(color.b / 255) * 255,
+            },
+          },
+          strokeStyleVersion: 2,
+          strokeEnabled: true
+        },
+      },
+      _isCommand: false,
+    };
+  }
+  ////使用 executeAsModal 包装 batchPlay 命令
+  try {
+    await photoshop.core.executeAsModal(
+      async () => {
+        await batchPlay([setColorCommand(finalRGB)], {
+          synchronousExecution: false,
+          modalBehavior: "execute",
+        });
+        //const res = await photoshop.action.batchPlay([openPicker], {})
+      },
+      { commandName: "Set Color Command" }
+    );
+  } catch (e) {
+    console.error("Error setting color with batchPlay:", e);
+    console.error(e);
+  }
+}
