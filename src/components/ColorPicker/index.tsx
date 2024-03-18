@@ -361,6 +361,24 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   };
 
+
+  const handleUpdatePanelColor = (
+    isFore: boolean
+  ) => {
+    console.log("🚀 ~ ColorPicker ~ isFore:", isFore)
+    if (isFore) {
+
+    } else {
+
+
+    }
+
+
+
+  };
+
+
+
   return (
     <div>
       <div className="colorPicker">
@@ -370,6 +388,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               foregroundColor={formatHexColor(hexRGB)}
               backgroundColor={formatHexColor(hexRGB_back)}
               onColorSelect={handleColorSelect}
+              onUpdatePanelColor={handleUpdatePanelColor}
             />
 
             {/*             

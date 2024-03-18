@@ -499,6 +499,11 @@ export async function HSBToPhotoShop(finalHSB: HSV, isFore: boolean) {
 export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
   const photoshop = window.require("photoshop");
   const batchPlay = photoshop.action.batchPlay;
+  const linearHSB = rgbToHsb(
+    SRGBToLinear(finalRGB.r / 255) * 255,
+    SRGBToLinear(finalRGB.g / 255) * 255,
+    SRGBToLinear(finalRGB.b / 255) * 255
+  );
 
   try {
     await photoshop.core.executeAsModal(
@@ -510,10 +515,13 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
           },
           "value": true,
           "color": {
-            _obj: 'RGBColor',
-            red: SRGBToLinear(finalRGB.r / 255) * 255,
-            grain: SRGBToLinear(finalRGB.g / 255) * 255,
-            blue: SRGBToLinear(finalRGB.b / 255) * 255,
+            _obj: "HSBColorClass",
+            hue: {
+              _unit: "angleUnit",
+              _value: linearHSB.h,
+            },
+            saturation: linearHSB.s,
+            brightness: linearHSB.v,
           },
           "dontRecord": true,
           "forceNotify": true,
@@ -529,7 +537,6 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
         // console.log("You pickedCOL:", colorPicked.brightness);
         var forPass = createHSV(colorPicked.hue._value, colorPicked.saturation, colorPicked.brightness);
         HSBToPhotoShop(forPass, isFore);
-        return forPass;
 
       },
       { commandName: "Set Color Command" }
