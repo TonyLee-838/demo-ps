@@ -15,7 +15,7 @@
   outline: 0.1px solid #8c8c8c;
   flex: 1;
   height: 90vh;
-  margin-right: 8px;
+  margin-right: 5px;
 }
 
 .canvas-container {
@@ -28,17 +28,18 @@
 .colorBlockAndForm {
   /* or 'absolute' if you want it to be relative to a positioned parent */
   right: 0px;
-  margin-left: 0;
-  margin-right: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
   margin-top: 4px;
   height: 90vh;
+  width: 66px;
   flex-shrink: 0;
 }
 
 .output {
   width: 50px;
   height: 50px;
-  margin-left: 8px;
+  margin-left: 5px;
   border-radius: 4px;
 }
 
