@@ -190,8 +190,12 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
+      console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
       //descriptor._target?.[0]?._property获取，确认是否为前景色
       const property = descriptor._target?.[0]?._property;
+
+
+
       //23.0.3版本传过来的rgb全是undefined 我晕....用hsv转rgb得了
       if (property == "foregroundColor") {
         const psHue = app.foregroundColor.hsb.hue;

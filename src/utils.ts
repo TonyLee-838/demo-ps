@@ -1,4 +1,4 @@
-import { throttle } from "lodash-es";
+import { result, throttle } from "lodash-es";
 
 export interface RGB {
   r: number;
@@ -425,7 +425,6 @@ export async function RGBToStrokeStyle(finalRGB: RGB) {
           synchronousExecution: false,
           modalBehavior: "execute",
         });
-        //const res = await photoshop.action.batchPlay([openPicker], {})
       },
       { commandName: "Set Color Command" }
     );
@@ -433,4 +432,113 @@ export async function RGBToStrokeStyle(finalRGB: RGB) {
     console.error("Error setting color with batchPlay:", e);
     console.error(e);
   }
+}
+
+
+
+
+export async function HSBToPhotoShop(finalHSB: HSV, isFore: boolean) {
+  const photoshop = window.require("photoshop");
+  const batchPlay = photoshop.action.batchPlay;
+  // 构建一个设置前景色或背景色的 batchPlay 命令
+  function setColorCommand(color, isFore) {
+
+    return {
+      _obj: "set",
+      _target: [
+        {
+          _ref: "color",
+          _property: isFore ? "foregroundColor" : "backgroundColor",
+        },
+      ],
+      to: {
+        _obj: "HSBColorClass",
+        hue: {
+          _unit: "angleUnit",
+          _value: finalHSB.h,
+        },
+        saturation: finalHSB.s,
+        brightness: finalHSB.v,
+      },
+      source: "colorPickerPanel",
+      _options: {
+        dialogOptions: "dontDisplay",
+      },
+    };
+  }
+
+
+
+  ////使用 executeAsModal 包装 batchPlay 命令
+  try {
+    await photoshop.core.executeAsModal(
+      async () => {
+        await batchPlay([setColorCommand(finalHSB, isFore)], {
+          synchronousExecution: false,
+          modalBehavior: "execute",
+        });
+      },
+      { commandName: "Set Color Command" }
+    );
+  } catch (e) {
+    console.error("Error setting color with batchPlay:", e);
+    console.error(e);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
+  const photoshop = window.require("photoshop");
+  const batchPlay = photoshop.action.batchPlay;
+
+  try {
+    await photoshop.core.executeAsModal(
+      async () => {
+        var colorPicked = await batchPlay([{
+          "_obj": "showColorPicker",
+          "application": {
+            "_class": "null"
+          },
+          "value": true,
+          "color": {
+            _obj: 'RGBColor',
+            red: SRGBToLinear(finalRGB.r / 255) * 255,
+            grain: SRGBToLinear(finalRGB.g / 255) * 255,
+            blue: SRGBToLinear(finalRGB.b / 255) * 255,
+          },
+          "dontRecord": true,
+          "forceNotify": true,
+        }
+        ], {
+          synchronousExecution: true
+        })[0].color;
+
+
+        // console.log("You picked:", colorPicked);
+        // console.log("You pickedCOL:", colorPicked.hue._value);
+        // console.log("You pickedCOL:", colorPicked.saturation);
+        // console.log("You pickedCOL:", colorPicked.brightness);
+        var forPass = createHSV(colorPicked.hue._value, colorPicked.saturation, colorPicked.brightness);
+        HSBToPhotoShop(forPass, isFore);
+        return forPass;
+
+      },
+      { commandName: "Set Color Command" }
+    );
+
+  } catch (e) {
+    console.error("Error setting color with batchPlay:", e);
+    console.error(e);
+  }
+
+
 }

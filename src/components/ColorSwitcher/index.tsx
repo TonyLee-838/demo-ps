@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "./index.css"; // 引入CSS文件
 
+import {
+  ShowColorPicker,
+  hexToRgb,
+} from "../../utils";
+
 type ColorSwitcherProps = {
   foregroundColor: string;
   backgroundColor: string;
@@ -25,18 +30,36 @@ const ColorSwitcher: React.FC<ColorSwitcherProps> = ({
   return (
     <div className="color-switcher">
       <div
-        className={`color-box color-box2 foreground-color ${
-          selected === "foreground" ? "selected" : ""
-        }`}
+        className={`color-box color-box2 foreground-color ${selected === "foreground" ? "selected" : ""
+          }`}
         style={{ backgroundColor: foregroundColor }}
-        onClick={() => selectColor("foreground")}
+        onClick={() => {
+          if (selected == "foreground") {
+            ShowColorPicker(hexToRgb(foregroundColor), true);
+
+
+          } else {
+            selectColor("foreground")
+          }
+        }}
       ></div>
       <div
-        className={`color-box color-box2 background-color ${
-          selected === "background" ? "selected" : ""
-        }`}
+        className={`color-box color-box2 background-color ${selected === "background" ? "selected" : ""
+          }`}
         style={{ backgroundColor: backgroundColor }}
-        onClick={() => selectColor("background")}
+        onClick={() => {
+          if (selected == "background") {
+            ShowColorPicker(hexToRgb(backgroundColor), false);
+
+
+          } else {
+            selectColor("background")
+          }
+
+
+
+
+        }}
       ></div>
     </div>
   );
