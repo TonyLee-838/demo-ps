@@ -2,10 +2,7 @@
   width: 40px;
   margin: 0px;
   height: 20px;
-  border-radius: 0;
   padding: 0 2px
-    /* 取消圆角 */
-
 }
 
 .item {
@@ -21,6 +18,5 @@
 }
 
 .form {
-
   margin-right: 1px;
 }

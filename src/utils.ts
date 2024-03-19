@@ -340,99 +340,99 @@ export function formatHexColor(hex: string) {
   return "#" + hex;
 }
 
-export async function RGBToContentLayer(finalRGB: RGB) {
-  const photoshop = window.require("photoshop");
-  const batchPlay = photoshop.action.batchPlay;
-  function setColorCommand(color) {
-    return {
-      _obj: "set",
-      _target: [
-        {
-          _enum: "ordinal",
-          _ref: "contentLayer",
-          _value: "targetEnum",
-        },
-      ],
-      to: {
-        _obj: "solidColorLayer",
-        color: {
-          _obj: "RGBColor",
-          red: SRGBToLinear(color.r / 255) * 255,
-          grain: SRGBToLinear(color.g / 255) * 255,
-          blue: SRGBToLinear(color.b / 255) * 255,
-        },
-      },
-      _isCommand: false,
-    };
-  }
-  ////使用 executeAsModal 包装 batchPlay 命令
-  try {
-    await photoshop.core.executeAsModal(
-      async () => {
-        await batchPlay([setColorCommand(finalRGB)], {
-          synchronousExecution: false,
-          modalBehavior: "execute",
-        });
-        //const res = await photoshop.action.batchPlay([openPicker], {})
-      },
-      { commandName: "Set Color Command" }
-    );
-  } catch (e) {
-    console.error("Error setting color with batchPlay:", e);
-    console.error(e);
-  }
-}
+// export async function RGBToContentLayer(finalRGB: RGB) {
+//   const photoshop = window.require("photoshop");
+//   const batchPlay = photoshop.action.batchPlay;
+//   function setColorCommand(color) {
+//     return {
+//       _obj: "set",
+//       _target: [
+//         {
+//           _enum: "ordinal",
+//           _ref: "contentLayer",
+//           _value: "targetEnum",
+//         },
+//       ],
+//       to: {
+//         _obj: "solidColorLayer",
+//         color: {
+//           _obj: "RGBColor",
+//           red: SRGBToLinear(color.r / 255) * 255,
+//           grain: SRGBToLinear(color.g / 255) * 255,
+//           blue: SRGBToLinear(color.b / 255) * 255,
+//         },
+//       },
+//       _isCommand: false,
+//     };
+//   }
+//   ////使用 executeAsModal 包装 batchPlay 命令
+//   try {
+//     await photoshop.core.executeAsModal(
+//       async () => {
+//         await batchPlay([setColorCommand(finalRGB)], {
+//           synchronousExecution: false,
+//           modalBehavior: "execute",
+//         });
+//         //const res = await photoshop.action.batchPlay([openPicker], {})
+//       },
+//       { commandName: "Set Color Command" }
+//     );
+//   } catch (e) {
+//     console.error("Error setting color with batchPlay:", e);
+//     console.error(e);
+//   }
+// }
 
 
-export async function RGBToStrokeStyle(finalRGB: RGB) {
-  const photoshop = window.require("photoshop");
-  const batchPlay = photoshop.action.batchPlay;
-  function setColorCommand(color) {
-    return {
-      _obj: "set",
-      _target: [
-        {
-          _enum: "ordinal",
-          _ref: "contentLayer",
-          _value: "targetEnum",
-        },
-      ],
-      to: {
-        _obj: "shapeStyle",
-        strokeStyle: {
-          _obj: "strokeStyle",
-          strokeStyleContent: {
-            _obj: "solidColorLayer",
-            color: {
-              _obj: "RGBColor",
-              red: SRGBToLinear(color.r / 255) * 255,
-              grain: SRGBToLinear(color.g / 255) * 255,
-              blue: SRGBToLinear(color.b / 255) * 255,
-            },
-          },
-          strokeStyleVersion: 2,
-          strokeEnabled: true
-        },
-      },
-      _isCommand: false,
-    };
-  }
-  ////使用 executeAsModal 包装 batchPlay 命令
-  try {
-    await photoshop.core.executeAsModal(
-      async () => {
-        await batchPlay([setColorCommand(finalRGB)], {
-          synchronousExecution: false,
-          modalBehavior: "execute",
-        });
-      },
-      { commandName: "Set Color Command" }
-    );
-  } catch (e) {
-    console.error("Error setting color with batchPlay:", e);
-    console.error(e);
-  }
-}
+// export async function RGBToStrokeStyle(finalRGB: RGB) {
+//   const photoshop = window.require("photoshop");
+//   const batchPlay = photoshop.action.batchPlay;
+//   function setColorCommand(color) {
+//     return {
+//       _obj: "set",
+//       _target: [
+//         {
+//           _enum: "ordinal",
+//           _ref: "contentLayer",
+//           _value: "targetEnum",
+//         },
+//       ],
+//       to: {
+//         _obj: "shapeStyle",
+//         strokeStyle: {
+//           _obj: "strokeStyle",
+//           strokeStyleContent: {
+//             _obj: "solidColorLayer",
+//             color: {
+//               _obj: "RGBColor",
+//               red: SRGBToLinear(color.r / 255) * 255,
+//               grain: SRGBToLinear(color.g / 255) * 255,
+//               blue: SRGBToLinear(color.b / 255) * 255,
+//             },
+//           },
+//           strokeStyleVersion: 2,
+//           strokeEnabled: true
+//         },
+//       },
+//       _isCommand: false,
+//     };
+//   }
+//   ////使用 executeAsModal 包装 batchPlay 命令
+//   try {
+//     await photoshop.core.executeAsModal(
+//       async () => {
+//         await batchPlay([setColorCommand(finalRGB)], {
+//           synchronousExecution: false,
+//           modalBehavior: "execute",
+//         });
+//       },
+//       { commandName: "Set Color Command" }
+//     );
+//   } catch (e) {
+//     console.error("Error setting color with batchPlay:", e);
+//     console.error(e);
+//   }
+// }
 
 
 
@@ -467,8 +467,6 @@ export async function HSBToPhotoShop(finalHSB: HSV, isFore: boolean) {
     };
   }
 
-
-
   ////使用 executeAsModal 包装 batchPlay 命令
   try {
     await photoshop.core.executeAsModal(
@@ -485,15 +483,6 @@ export async function HSBToPhotoShop(finalHSB: HSV, isFore: boolean) {
     console.error(e);
   }
 }
-
-
-
-
-
-
-
-
-
 
 
 export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
@@ -548,53 +537,51 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
     forPass.b = linearToGammaSpaceExact(forPass.b);
     //const forPass = forPassHSV;
     return forPass;
-
   } catch (e) {
     console.error("Error setting color with batchPlay:", e);
     console.error(e);
   }
-
-
 }
-export async function getCurrentColorSpace() {
-  const photoshop = window.require('photoshop');
-  let targetDocument = window.require("photoshop").app.activeDocument;
-  const documentID = targetDocument.id;
-  let layer = targetDocument.activeLayers[0];
-  const layerID = layer.id;
 
-  return new Promise((resolve, reject) => {
-    const myScript = async () => {
-      console.log('myScript started'); // 确认 myScript 是否开始执行
-      try {
-        const imaging = photoshop.imaging;
-        console.log('imaging module:', imaging); // 确认 imaging 模块是否可用
-        const imageObj = await imaging.getPixels(
-          {
-            "documentID": documentID,
-            "layerID": layerID,
-            colorSpace: "RGB"
-          }
+// export async function getCurrentColorSpace() {
+//   const photoshop = window.require('photoshop');
+//   let targetDocument = window.require("photoshop").app.activeDocument;
+//   const documentID = targetDocument.id;
+//   let layer = targetDocument.activeLayers[0];
+//   const layerID = layer.id;
 
-        );
-        const pixelData = imageObj.imageData;
-        const rgbProfiles = pixelData.colorProfile;
-        // console.log('🚀 ~ fetchPixelData ~ rgbProfiles:', rgbProfiles);
-        //return rgbProfiles
-        resolve(rgbProfiles);
-      } catch (err) {
-        console.error('Error inside executeAsModal:', err);
-        reject(err);
-      }
-    };
-    try {
-      console.log('executeAsModal about to be called'); // 确认 executeAsModal 即将被调用
-      photoshop.core.executeAsModal(myScript, {
-        commandName: "Set Color Command"
-      });
-    } catch (e) {
-      console.error('Error executing script:', e);
-      reject(e);
-    }
-  });
-}
+//   return new Promise((resolve, reject) => {
+//     const myScript = async () => {
+//       console.log('myScript started'); // 确认 myScript 是否开始执行
+//       try {
+//         const imaging = photoshop.imaging;
+//         console.log('imaging module:', imaging); // 确认 imaging 模块是否可用
+//         const imageObj = await imaging.getPixels(
+//           {
+//             "documentID": documentID,
+//             "layerID": layerID,
+//             colorSpace: "RGB"
+//           }
+
+//         );
+//         const pixelData = imageObj.imageData;
+//         const rgbProfiles = pixelData.colorProfile;
+//         // console.log('🚀 ~ fetchPixelData ~ rgbProfiles:', rgbProfiles);
+//         //return rgbProfiles
+//         resolve(rgbProfiles);
+//       } catch (err) {
+//         console.error('Error inside executeAsModal:', err);
+//         reject(err);
+//       }
+//     };
+//     try {
+//       console.log('executeAsModal about to be called'); // 确认 executeAsModal 即将被调用
+//       photoshop.core.executeAsModal(myScript, {
+//         commandName: "Set Color Command"
+//       });
+//     } catch (e) {
+//       console.error('Error executing script:', e);
+//       reject(e);
+//     }
+//   });
+// }

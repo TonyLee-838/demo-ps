@@ -16,9 +16,6 @@ import {
   rgbToHex,
   calculateXYFromSV,
   formatHexColor,
-  RGBToContentLayer,
-  RGBToStrokeStyle,
-  getCurrentColorSpace
 } from "../../utils";
 import ColorSlider, { ColorSliderRefType } from "../ColorSlider";
 import ColorForm from "../ColorForm";
@@ -86,9 +83,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   };
 
-  const [updateKey, setUpdateKey] = useState(0);
-
-  const [colorSpace, setColorSpace] = useState("");
 
   const [renderKey, setRenderKey] = useState(0);
   //const [, forceRender] = useState({});
@@ -119,74 +113,9 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     }
   }, [selectedFore, renderKey]);
 
-  useEffect(() => {//监听颜色空间的切换
-    getCurrentColorSpace().then(rgbProfiles => {
-      setColorSpace(rgbProfiles);
-    });
-    // setUpdateKey(updateKey + 1)//第一次先触发一下获取颜色空间吗?
-    const photoshop = window.require("photoshop");
-    const action = photoshop.action;
-    action.addNotificationListener(["assignProfile"], (event, descriptor) => {
-      console.log("🚀 ~:", descriptor)
-      getCurrentColorSpace().then(rgbProfiles => {
-        setColorSpace(rgbProfiles);
-      });
-
-    });
-  }, []);
-
-
-  // useEffect(() => {//获取一下当前的颜色空间
-
-  //   const photoshop = window.require('photoshop');
-  //   let targetDocument = window.require("photoshop").app.activeDocument;
-  //   const documentID = targetDocument.id;
-  //   let layer = targetDocument.activeLayers[0];
-  //   const layerID = layer.id;
-  //   const myScript = async () => {
-  //     console.log('myScript started'); // 确认 myScript 是否开始执行
-  //     try {
-  //       const imaging = photoshop.imaging;
-  //       console.log('imaging module:', imaging); // 确认 imaging 模块是否可用
-  //       const imageObj = await imaging.getPixels(
-  //         {
-  //           "documentID": documentID,
-  //           "layerID": layerID,
-  //           colorSpace: "RGB"
-  //         }
-
-  //       );
-  //       const pixelData = imageObj.imageData;
-  //       const rgbProfiles = pixelData.colorProfile;
-  //       console.log('🚀 ~ fetchPixelData ~ rgbProfiles:', rgbProfiles);
-  //       setColorSpace(rgbProfiles)
-  //     } catch (err) {
-  //       console.error('Error inside executeAsModal:', err);
-  //     }
-  //   };
-  //   try {
-  //     console.log('executeAsModal about to be called'); // 确认 executeAsModal 即将被调用
-  //     photoshop.core.executeAsModal(myScript, {
-  //       commandName: "Set Color Command"
-  //     });
-  //   } catch (e) {
-  //     console.error('Error executing script:', e);
-  //   }
-  // }, []);
-
-
   useEffect(() => {//初始化获取
-
-
     const photoshop = window.require("photoshop");
     const app = photoshop.app;
-
-
-
-
-
-
-
     const psHue = app.foregroundColor.hsb.hue;
     const psSaturation = app.foregroundColor.hsb.saturation;
     const psValue = app.foregroundColor.hsb.brightness;
@@ -196,7 +125,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     const gammaBlue = linearToGammaSpaceExact(psRGB.b);
 
     const psCol = createRGB(gammaRed, gammaGreen, gammaBlue);
-    console.log("🚀 ~ useEffect ~ psCol:", psCol)
+    //console.log("🚀 ~ useEffect ~ psCol:", psCol)
     setFinalRGB(psCol);
     const psColRound = createRGB(
       Math.round(gammaRed),
@@ -225,7 +154,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
       gammaGreen_back,
       gammaBlue_back
     );
-    console.log("🚀 ~ useEffect ~ psCol_back:", psCol_back)
+    //console.log("🚀 ~ useEffect ~ psCol_back:", psCol_back)
     setFinalRGB_back(psCol_back);
     const psColRound_back = createRGB(
       Math.round(gammaRed_back),
@@ -264,7 +193,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     const action = photoshop.action;
     action.addNotificationListener(["set"], (event, descriptor) => {
-      console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
+      // console.log("🚀 ~ action.addNotificationListener ~ descriptor:", descriptor)
       //descriptor._target?.[0]?._property获取，确认是否为前景色
       const property = descriptor._target?.[0]?._property;
 
@@ -438,8 +367,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
     color: RGB,
     isFore: boolean
   ) => {
-    console.log("🚀 ~ ColorPicker ~ isFore:", isFore)
-    console.log("🚀 ~ ColorPicker ~ color:", color)
 
     if (isFore) {
       const psCol = createRGB(color.r, color.g, color.b);
@@ -477,15 +404,7 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
 
     }
 
-    //setUpdateKey(updateKey);
-
-
   };
-
-
-
-
-
 
 
   return (
@@ -770,7 +689,6 @@ export const ColorPicker = ({ onChange }: { onChange?: (c: RGB) => void }) => {
               value={selectedFore ? hexRGB : hexRGB_back}
             ></input>
           </div>
-          <label> {colorSpace}</label>
         </div>
       </div>
     </div>
