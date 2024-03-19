@@ -556,3 +556,45 @@ export async function ShowColorPicker(finalRGB: RGB, isFore: boolean) {
 
 
 }
+export async function getCurrentColorSpace() {
+  const photoshop = window.require('photoshop');
+  let targetDocument = window.require("photoshop").app.activeDocument;
+  const documentID = targetDocument.id;
+  let layer = targetDocument.activeLayers[0];
+  const layerID = layer.id;
+
+  return new Promise((resolve, reject) => {
+    const myScript = async () => {
+      console.log('myScript started'); // 确认 myScript 是否开始执行
+      try {
+        const imaging = photoshop.imaging;
+        console.log('imaging module:', imaging); // 确认 imaging 模块是否可用
+        const imageObj = await imaging.getPixels(
+          {
+            "documentID": documentID,
+            "layerID": layerID,
+            colorSpace: "RGB"
+          }
+
+        );
+        const pixelData = imageObj.imageData;
+        const rgbProfiles = pixelData.colorProfile;
+        // console.log('🚀 ~ fetchPixelData ~ rgbProfiles:', rgbProfiles);
+        //return rgbProfiles
+        resolve(rgbProfiles);
+      } catch (err) {
+        console.error('Error inside executeAsModal:', err);
+        reject(err);
+      }
+    };
+    try {
+      console.log('executeAsModal about to be called'); // 确认 executeAsModal 即将被调用
+      photoshop.core.executeAsModal(myScript, {
+        commandName: "Set Color Command"
+      });
+    } catch (e) {
+      console.error('Error executing script:', e);
+      reject(e);
+    }
+  });
+}
